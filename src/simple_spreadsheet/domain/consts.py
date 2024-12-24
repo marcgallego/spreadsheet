@@ -1,0 +1,2 @@
+NUM_ROWS = 1_000
+NUM_COLS = 1_000

@@ -1,9 +1,10 @@
 from .contents import Content
+from .coordinates import Coordinates
 
 
 class Cell:
-    def __init__(self, id: str) -> None:
-        self.id = id
+    def __init__(self, coords: Coordinates) -> None:
+        self.coordinates = coords
         self.content = None
 
     def set_value(self, content) -> None:
