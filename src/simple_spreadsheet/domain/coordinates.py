@@ -19,6 +19,11 @@ class Coordinates:
         return cls(row, col)
 
     @staticmethod
+    def is_valid_id(cell_id) -> None:
+        if not re.match(r'^[A-Z]+[0-9]+$', cell_id):
+            raise ValueError('Invalid cell id')
+
+    @staticmethod
     def parse_id(cell_id) -> tuple[int, int]:
         row_str = ''.join(filter(str.isalpha, cell_id))
 
@@ -30,11 +35,6 @@ class Coordinates:
         col = int(col_str) - 1
 
         return row, col
-
-    @staticmethod
-    def is_valid_id(cell_id) -> None:
-        if not re.match(r'^[A-Z]+[0-9]+$', cell_id):
-            raise ValueError('Invalid cell id')
 
     def __str__(self) -> str:
         return self.id + f'({self.row}, {self.col})'

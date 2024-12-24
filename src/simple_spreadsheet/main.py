@@ -1,5 +1,4 @@
 from usecase.controller import Controller
-from domain.coordinates import Coordinates
 from domain.contents import Number
 
 
