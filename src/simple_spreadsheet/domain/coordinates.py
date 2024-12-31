@@ -11,6 +11,9 @@ class Coordinates:
         self.is_in_range()
         self.id = self.parse_indices(row, col)
 
+    def __repr__(self) -> str:
+        return self.id
+
     @classmethod
     def from_id(cls, cell_id: str) -> 'Coordinates':
         cell_id = cell_id.upper()
