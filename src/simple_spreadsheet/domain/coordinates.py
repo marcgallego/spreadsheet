@@ -24,7 +24,7 @@ class Coordinates:
     @staticmethod
     def is_valid_id(cell_id) -> None:
         if not re.match(r'^[A-Z]+[0-9]+$', cell_id):
-            raise ValueError('Invalid cell id')
+            raise ValueError(f'Invalid cell ID ({cell_id})')
 
     @staticmethod
     def parse_id(cell_id) -> tuple[int, int]:

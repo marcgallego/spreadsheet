@@ -10,7 +10,7 @@ def main() -> None:
     print(controller.spreadsheet.get_cell('A1').get_value())
 
     tk = Tokenizer()
-    print(tk.tokenize('SUMA(A1:B2) + 1021 - PROMEDIO(C3;D4)'))
+    print(tk.tokenize('SUMA(A1:B2) + -10.21 - promedio(C3;D4)'))
 
 
 if __name__ == '__main__':
