@@ -40,8 +40,9 @@ class Tokenizer:
             i += 1
 
         if var.isalpha():  # All alphabetic characters
-            if var.upper() in FORMULAS:
-                return var.upper(), i
+            upper_var = var.upper()
+            if upper_var in FORMULAS:
+                return upper_var, i
             raise ValueError(
                 f'Invalid formula "{var}" at position {start_index}')
         return Coordinates.from_id(var), i
