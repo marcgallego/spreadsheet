@@ -10,10 +10,6 @@ class Tokenizer:
     def __init__(self) -> None:
         self.__tokens: list[Union[str, Coordinates]] = []
 
-    def _normalize_expression(self, expression: str) -> str:
-        """Removes unnecessary spaces from the expression."""
-        return expression.replace(' ', '')
-
     def _is_valid_number_character(self, char: str) -> bool:
         """Checks if a character is a digit or the decimal separator."""
         return char.isdigit() or char == DECIMAL_SEPARATOR
@@ -21,11 +17,15 @@ class Tokenizer:
     def _extract_number(self, expression: str, start_index: int) -> tuple[float, int]:
         """Extracts a numeric token from the expression."""
         num = ''
+        decimal_separator_seen = False
         n = len(expression)
         i = start_index
         while i < n and self._is_valid_number_character(expression[i]):
-            if expression[i] == DECIMAL_SEPARATOR and DECIMAL_SEPARATOR in num:
-                raise ValueError(f'Invalid number format at position {i}')
+            if expression[i] == DECIMAL_SEPARATOR:
+                if decimal_separator_seen:
+                    raise ValueError(
+                        f'Multiple decimal separators at position {i}')
+                decimal_separator_seen = True
             num += expression[i]
             i += 1
         return float(num), i
@@ -50,13 +50,14 @@ class Tokenizer:
     def tokenize(self, expression: str) -> list[Union[str, Coordinates]]:
         """Tokenizes the given mathematical expression."""
         self.__tokens = []
-        expression = self._normalize_expression(expression)
         n = len(expression)
         i = 0
 
         while i < n:
             char = expression[i]
-            if self._is_valid_number_character(char):  # Handle numbers
+            if char.isspace():
+                i += 1
+            elif self._is_valid_number_character(char):  # Handle numbers
                 num, i = self._extract_number(expression, i)
                 self.__tokens.append(num)
             elif char.isalpha():  # Handle cells and formulas
