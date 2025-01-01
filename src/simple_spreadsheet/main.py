@@ -1,6 +1,6 @@
 from usecase.controller import Controller
 from domain.contents import Number
-from domain.formula_evaluation import Tokenizer
+from domain.formula_evaluation.tokenizer import Tokenizer
 
 
 def main() -> None:
@@ -10,7 +10,7 @@ def main() -> None:
     print(controller.spreadsheet.get_cell('A1').get_value())
 
     tk = Tokenizer()
-    print(tk.tokenize('SUMA(A1:B2) + .21 + -12.1 - promedio(C3;D4)'))
+    print(tk.tokenize('SUMA(a1:B2) + .21 + -12.1000 - promedio(C3;D4)'))
 
 
 if __name__ == '__main__':
