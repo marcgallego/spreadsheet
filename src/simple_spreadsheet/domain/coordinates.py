@@ -22,12 +22,12 @@ class Coordinates:
         return cls(row, col)
 
     @staticmethod
-    def is_valid_id(cell_id) -> None:
+    def is_valid_id(cell_id: str) -> None:
         if not re.match(r'^[A-Z]+[0-9]+$', cell_id):
             raise ValueError(f'Invalid cell ID ({cell_id})')
 
     @staticmethod
-    def parse_id(cell_id) -> tuple[int, int]:
+    def parse_id(cell_id: str) -> tuple[int, int]:
         row_str = ''.join(filter(str.isalpha, cell_id))
 
         row = 0

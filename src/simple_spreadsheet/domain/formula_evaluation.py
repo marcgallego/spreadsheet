@@ -1,6 +1,8 @@
 from typing import Union
 from domain.coordinates import Coordinates
 
+type Token = Union[str, float, Coordinates]
+
 OPERATORS_AND_DELIMITERS = {'+', '-', '*', '/', '(', ')', ':', ';'}
 FORMULAS = {'SUMA', 'PROMEDIO', 'MAX', 'MIN'}
 DECIMAL_SEPARATOR = '.'
@@ -8,7 +10,7 @@ DECIMAL_SEPARATOR = '.'
 
 class Tokenizer:
     def __init__(self) -> None:
-        self.__tokens: list[Union[str, Coordinates]] = []
+        self.__tokens: list[Token] = []
 
     def _is_valid_number_character(self, char: str) -> bool:
         """Checks if a character is a digit or the decimal separator."""
@@ -30,7 +32,7 @@ class Tokenizer:
             i += 1
         return float(num), i
 
-    def _extract_cell_or_formula(self, expression: str, start_index: int) -> tuple[Union[str, float, Coordinates], int]:
+    def _extract_cell_or_formula(self, expression: str, start_index: int) -> tuple[Union[str, Coordinates], int]:
         """Extracts a cell reference or formula from the expression."""
         var = ''
         n = len(expression)
@@ -47,7 +49,7 @@ class Tokenizer:
                 f'Invalid formula "{var}" at position {start_index}')
         return Coordinates.from_id(var), i
 
-    def tokenize(self, expression: str) -> list[Union[str, Coordinates]]:
+    def tokenize(self, expression: str) -> list[Token]:
         """Tokenizes the given mathematical expression."""
         self.__tokens = []
         n = len(expression)
