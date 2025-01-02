@@ -1,8 +1,6 @@
 from typing import Union
 from domain.coordinates import Coordinates
-from domain.formula_evaluation.consts import DECIMAL_SEPARATOR, OPERATORS_AND_DELIMITERS, FORMULAS
-
-type Token = Union[str, float, Coordinates]
+from domain.formula_evaluation.consts import Token, DECIMAL_SEPARATOR, OPERATORS_AND_DELIMITERS, FUNCTIONS
 
 
 class Tokenizer:
@@ -10,7 +8,7 @@ class Tokenizer:
         self.__tokens: list[Token] = []
         self.__decimal_separator = DECIMAL_SEPARATOR
         self.__operators_and_delimiters = OPERATORS_AND_DELIMITERS
-        self.__formulas = FORMULAS
+        self.__functions = FUNCTIONS
 
     def _is_valid_number_character(self, char: str) -> bool:
         """Checks if a character is a digit or the decimal separator."""
@@ -32,8 +30,8 @@ class Tokenizer:
             i += 1
         return float(num), i
 
-    def _extract_cell_or_formula(self, expression: str, start_index: int) -> tuple[Union[str, Coordinates], int]:
-        """Extracts a cell reference or formula from the expression."""
+    def _extract_cell_or_function(self, expression: str, start_index: int) -> tuple[Union[str, Coordinates], int]:
+        """Extracts a cell reference or function from the expression."""
         var = ''
         n = len(expression)
         i = start_index
@@ -43,10 +41,10 @@ class Tokenizer:
 
         if var.isalpha():  # All alphabetic characters
             upper_var = var.upper()
-            if upper_var in self.__formulas:
+            if upper_var in self.__functions:
                 return upper_var, i
             raise ValueError(
-                f'Invalid formula "{var}" at position {start_index}')
+                f'Invalid function "{var}" at position {start_index}')
         return Coordinates.from_id(var), i
 
     def tokenize(self, expression: str) -> list[Token]:
@@ -62,8 +60,8 @@ class Tokenizer:
             elif self._is_valid_number_character(char):  # Handle numbers
                 num, i = self._extract_number(expression, i)
                 self.__tokens.append(num)
-            elif char.isalpha():  # Handle cells and formulas
-                var, i = self._extract_cell_or_formula(expression, i)
+            elif char.isalpha():  # Handle cells and functions
+                var, i = self._extract_cell_or_function(expression, i)
                 self.__tokens.append(var)
             elif char in self.__operators_and_delimiters:  # Handle operators and delimiters
                 self.__tokens.append(char)
