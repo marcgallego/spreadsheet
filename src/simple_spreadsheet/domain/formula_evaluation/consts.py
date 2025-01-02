@@ -5,8 +5,10 @@ type Token = Union[str, float, Coordinates]
 
 OPERATORS = {'+', '-', '*', '/'}
 UNARY_OPERATORS = {'+', '-'}
-SEPARATORS = {':', ';'}  # TODO: fix duplicity
-DELIMITERS = {'(', ')', ':', ';'}
+RANGE_SEPARATOR = ':'
+PARAM_SEPARATOR = ';'
+SEPARATORS = {RANGE_SEPARATOR, PARAM_SEPARATOR}
+DELIMITERS = {'(', ')', ':', ';'}  # TODO: fix duplicity
 OPERATORS_AND_DELIMITERS = OPERATORS.union(DELIMITERS)
 FUNCTIONS = {'SUMA', 'PROMEDIO', 'MAX', 'MIN'}
 DECIMAL_SEPARATOR = '.'
