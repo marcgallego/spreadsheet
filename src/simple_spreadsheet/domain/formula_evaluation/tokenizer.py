@@ -1,20 +1,20 @@
 from typing import Union
 from domain.coordinates import Coordinates
+from domain.formula_evaluation.consts import DECIMAL_SEPARATOR, OPERATORS_AND_DELIMITERS, FORMULAS
 
 type Token = Union[str, float, Coordinates]
-
-OPERATORS_AND_DELIMITERS = {'+', '-', '*', '/', '(', ')', ':', ';'}
-FORMULAS = {'SUMA', 'PROMEDIO', 'MAX', 'MIN'}
-DECIMAL_SEPARATOR = '.'
 
 
 class Tokenizer:
     def __init__(self) -> None:
         self.__tokens: list[Token] = []
+        self.__decimal_separator = DECIMAL_SEPARATOR
+        self.__operators_and_delimiters = OPERATORS_AND_DELIMITERS
+        self.__formulas = FORMULAS
 
     def _is_valid_number_character(self, char: str) -> bool:
         """Checks if a character is a digit or the decimal separator."""
-        return char.isdigit() or char == DECIMAL_SEPARATOR
+        return char.isdigit() or char == self.__decimal_separator
 
     def _extract_number(self, expression: str, start_index: int) -> tuple[float, int]:
         """Extracts a numeric token from the expression."""
@@ -23,7 +23,7 @@ class Tokenizer:
         n = len(expression)
         i = start_index
         while i < n and self._is_valid_number_character(expression[i]):
-            if expression[i] == DECIMAL_SEPARATOR:
+            if expression[i] == self.__decimal_separator:
                 if decimal_separator_seen:
                     raise ValueError(
                         f'Multiple decimal separators at position {i}')
@@ -43,7 +43,7 @@ class Tokenizer:
 
         if var.isalpha():  # All alphabetic characters
             upper_var = var.upper()
-            if upper_var in FORMULAS:
+            if upper_var in self.__formulas:
                 return upper_var, i
             raise ValueError(
                 f'Invalid formula "{var}" at position {start_index}')
@@ -65,7 +65,7 @@ class Tokenizer:
             elif char.isalpha():  # Handle cells and formulas
                 var, i = self._extract_cell_or_formula(expression, i)
                 self.__tokens.append(var)
-            elif char in OPERATORS_AND_DELIMITERS:  # Handle operators and delimiters
+            elif char in self.__operators_and_delimiters:  # Handle operators and delimiters
                 self.__tokens.append(char)
                 i += 1
             else:  # Invalid character

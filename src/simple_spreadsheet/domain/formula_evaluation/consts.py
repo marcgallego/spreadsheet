@@ -1,0 +1,5 @@
+OPERATORS = {'+', '-', '*', '/'}
+DELIMITERS = {'(', ')', ':', ';'}
+OPERATORS_AND_DELIMITERS = OPERATORS.union(DELIMITERS)
+FORMULAS = {'SUMA', 'PROMEDIO', 'MAX', 'MIN'}
+DECIMAL_SEPARATOR = '.'
