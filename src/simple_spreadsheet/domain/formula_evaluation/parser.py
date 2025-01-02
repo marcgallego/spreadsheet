@@ -9,6 +9,7 @@ class FormulaSyntaxError(Exception):
 
 class Parser:
     def __init__(self) -> None:
+        self.__tokens: list[Token] = []
         self.__stack: list[str] = []
         self.__operators = OPERATORS
         self.__unary_operators = UNARY_OPERATORS
@@ -35,11 +36,61 @@ class Parser:
         """Returns True if the token is a separator."""
         return token in self.__separators
 
-    def _validate_function(self, tokens, index) -> None:
+    def _is_range_separator(self, token) -> bool:
+        """Returns True if the token is a range separator."""
+        return token == ':'
+
+    def _validate_function(self, idx) -> int:
         """Validates a function token."""
-        if index + 1 >= len(tokens) or tokens[index + 1] != '(':
+        tokens = self.__tokens
+        function = tokens[idx]
+        n = len(tokens)
+        if idx + 1 >= n or tokens[idx + 1] != '(':
             raise FormulaSyntaxError(
-                f"Function '{tokens[index]}' must be followed by '('")
+                f"Function '{function}' must be followed by '('")
+        idx += 2
+
+        num_args = 0
+        last_element = 'separator'
+        while idx < n and tokens[idx] != ')':
+            if self._is_function(tokens[idx]):
+                idx = self._validate_function(idx) - 1
+                last_element = 'function'
+            elif self._is_number(tokens[idx]):
+                if last_element != 'separator':
+                    raise FormulaSyntaxError(
+                        f"Number at position {idx} must be preceded by a separator")
+                num_args += 1
+                last_element = 'number'
+            elif self._is_cell_reference(tokens[idx]):
+                if last_element != 'separator':
+                    raise FormulaSyntaxError(
+                        f"Cell reference at position {idx} must be preceded by a separator")
+                num_args += 1
+                last_element = 'cell reference'
+            elif tokens[idx] == ';':
+                last_element = 'separator'
+            elif tokens[idx] == ':':
+                if last_element != 'cell reference' or \
+                        (idx + 1 >= n or not self._is_cell_reference(tokens[idx + 1])):
+                    raise FormulaSyntaxError(
+                        f"Range ':' must be between two cell references (position {idx})")
+                if idx + 2 < n and tokens[idx + 2] == ':':
+                    raise FormulaSyntaxError(
+                        f"Multiple range separators at position {idx}")
+                idx += 1
+                last_element = 'cell range'
+            idx += 1
+
+        if idx >= n or tokens[idx] != ')':
+            raise FormulaSyntaxError(
+                f"Function '{function}' must end with ')'")
+
+        if num_args == 0:
+            raise FormulaSyntaxError(
+                f"Function '{function}' must have at least one argument")
+
+        return idx + 1
 
     def _validate_closing_parenthesis(self) -> None:
         """Validates a closing parenthesis."""
@@ -66,6 +117,15 @@ class Parser:
         if index + 1 >= len(tokens) or tokens[index + 1] in {')', *self.__operators}:
             raise FormulaSyntaxError("Separator must precede an operand")
 
+    def _validate_range(self, tokens, index) -> None:
+        """Validates a range (e.g., A1:A2)."""
+        if index == 0 or index + 1 >= len(tokens):
+            raise FormulaSyntaxError(
+                f"Range separator ':' at position {index} is invalid")
+        if not self._is_cell_reference(tokens[index - 1]) or not self._is_cell_reference(tokens[index + 1]):
+            raise FormulaSyntaxError(
+                f"Range ':' must be between two cell references (position {index})")
+
     def _validate_final_state(self, expect_operand) -> None:
         """Validates the final state of the formula."""
         if self.__stack:
@@ -79,28 +139,14 @@ class Parser:
         Validates the given tokenized formula.
         Raises FormulaSyntaxError if invalid.
         """
+        self.__tokens = tokens
         self.__stack.clear()
-        expect_operand = True
 
-        for i, token in enumerate(tokens):
-            if self._is_function(token):
-                self._validate_function(tokens, i)
-                expect_operand = True
-            elif token == '(':
-                self.__stack.append(token)
-                expect_operand = True
-            elif token == ')':
-                self._validate_closing_parenthesis()
-                expect_operand = False
-            elif self._is_cell_reference(token) or self._is_number(token):
-                self._validate_operand(expect_operand)
-                expect_operand = False
-            elif self._is_operator(token):
-                self._validate_operator(token, expect_operand)
-                expect_operand = True
-            elif self._is_separator(token):
-                self._validate_separator(i, tokens)
-            else:
-                raise FormulaSyntaxError(f"Unexpected token: {token}")
-
-        self._validate_final_state(expect_operand)
+        n = len(tokens)
+        print(n)
+        i = 0
+        while i < n:
+            if self._is_function(tokens[i]):
+                i = self._validate_function(i)
+                print('Function validated')
+                print(i)
