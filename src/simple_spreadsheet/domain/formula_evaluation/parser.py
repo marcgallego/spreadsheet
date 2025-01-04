@@ -1,7 +1,7 @@
 from enum import Enum, auto
 from typing import Optional
 from domain.coordinates import Coordinates
-from domain.formula_evaluation.consts import Token, OPERATORS, UNARY_OPERATORS, SEPARATORS, FUNCTIONS
+from domain.formula_evaluation.consts import Token, OPERATORS, UNARY_OPERATORS, SEPARATORS, FUNCTIONS, RANGE_SEPARATOR
 
 
 class FormulaTokenType(Enum):
@@ -125,8 +125,8 @@ class Parser:
                         self._validate_range(last_element)
                         last_element = FunctionTokenType.CELL_RANGE
                 else:
-                    raise SyntaxError(f"Unexpected token '{
-                                      token}' at position {self._pos}")
+                    raise SyntaxError(f"Unexpected token '{token}' \
+                                       at position {self._pos}")
 
         return num_args
 
@@ -211,8 +211,8 @@ class Parser:
             self._parse_expression()
 
             if self._peek() is not None:
-                raise SyntaxError(f"Unexpected token '{
-                                  self._peek()}' at position {self._pos}")
+                raise SyntaxError(f"Unexpected token '{self._peek()}' \
+                                   at position {self._pos}")
 
         except SyntaxError:
             raise

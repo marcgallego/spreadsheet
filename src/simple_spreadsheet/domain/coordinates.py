@@ -39,9 +39,6 @@ class Coordinates:
 
         return row, col
 
-    def __str__(self) -> str:
-        return self.id + f'({self.row}, {self.col})'
-
     def parse_indices(self, row: int, col: int) -> str:
         row_str = ''
         while row:
