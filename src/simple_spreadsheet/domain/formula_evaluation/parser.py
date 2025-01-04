@@ -4,6 +4,13 @@ from domain.coordinates import Coordinates
 from domain.formula_evaluation.consts import Token, OPERATORS, UNARY_OPERATORS, SEPARATORS, FUNCTIONS
 
 
+class FormulaTokenType(Enum):
+    OPERAND = 0
+    UNARY_OPERATOR = 1
+    BINARY_OPERATOR = 2
+    PARENTHESIS = 3
+
+
 class FunctionTokenType(Enum):
     FUNCTION = 0
     NUMBER = 1
@@ -33,6 +40,10 @@ class Parser:
         """Returns True if the token is a numeric value."""
         return isinstance(token, float)
 
+    def _is_operand(self, token) -> bool:
+        """Returns True if the token is an operand."""
+        return self._is_number(token) or self._is_cell_reference(token) or self._is_function(token)
+
     def _is_operator(self, token) -> bool:
         """Returns True if the token is an operator."""
         return token in self.__operators
@@ -45,18 +56,18 @@ class Parser:
         """Returns True if the token is a range separator."""
         return token == ':'
 
-    def _validate_range(self, last_element: str, idx: int) -> None:
-        """Validates a range separator ':'."""
+    def _validate_range(self, idx: int, last_element: FunctionTokenType) -> None:
+        """Validates a range (e.g., A1:A2)."""
         tokens = self.__tokens
-        n = len(tokens)
+        if idx == 0 or idx + 1 >= len(tokens):
+            raise SyntaxError(
+                f"Range separator ':' at position {idx} is invalid")
         if last_element != FunctionTokenType.CELL_REFERENCE:
             raise SyntaxError(
-                f"Range ':' must follow a cell reference (position {idx})")
-        if idx + 1 >= n or not self._is_cell_reference(tokens[idx + 1]):
+                f"Range ':' must be preceded by a cell reference (position {idx})")
+        if not self._is_cell_reference(tokens[idx + 1]):
             raise SyntaxError(
-                f"Range ':' must precede a cell reference (position {idx})")
-        if idx + 2 < n and tokens[idx + 2] == ':':
-            raise SyntaxError(f"Multiple range separators at position {idx}")
+                f"Range ':' must be followed by a cell reference (position {idx})")
 
     def _validate_function(self, idx: int) -> int:
         """Validates a function token and returns the index after validation."""
@@ -135,19 +146,6 @@ class Parser:
         if index + 1 >= len(tokens) or tokens[index + 1] in {')', *self.__operators}:
             raise SyntaxError("Separator must precede an operand")
 
-    def _validate_range(self, idx: int, last_element: FunctionTokenType) -> None:
-        """Validates a range (e.g., A1:A2)."""
-        tokens = self.__tokens
-        if idx == 0 or idx + 1 >= len(tokens):
-            raise SyntaxError(
-                f"Range separator ':' at position {idx} is invalid")
-        if not last_element == FunctionTokenType.CELL_REFERENCE:
-            raise SyntaxError(
-                f"Range ':' must be preceded by a cell reference (position {idx})")
-        if not self._is_cell_reference(tokens[idx + 1]):
-            raise SyntaxError(
-                f"Range ':' must be followed by a cell reference (position {idx})")
-
     def _validate_final_state(self, expect_operand) -> None:
         """Validates the final state of the formula."""
         if self.__stack:
@@ -165,10 +163,11 @@ class Parser:
         self.__stack.clear()
 
         n = len(tokens)
-        print(n)
         i = 0
+
+        last_element: FormulaTokenType = None
+
         while i < n:
             if self._is_function(tokens[i]):
                 i = self._validate_function(i)
-                print('Function validated')
-                print(i)
+                last_element = FormulaTokenType.OPERAND
