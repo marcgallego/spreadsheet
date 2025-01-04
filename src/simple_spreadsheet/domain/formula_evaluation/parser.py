@@ -97,7 +97,7 @@ class Parser:
         last_element = FunctionTokenType.SEPARATOR
 
         while (token := self._peek()) is not None and token != ')':
-            if token == ';':
+            if token == self._param_separator:
                 if last_element == FunctionTokenType.SEPARATOR:
                     raise SyntaxError(
                         f"Invalid separator at position {self._pos}")
@@ -122,7 +122,7 @@ class Parser:
                     num_args += 1
                     last_element = FunctionTokenType.CELL_REFERENCE
 
-                    if self._peek() == ':':
+                    if self._peek() == self._range_separator:
                         self._consume()
                         self._validate_range(last_element)
                         last_element = FunctionTokenType.CELL_RANGE
