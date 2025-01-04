@@ -89,8 +89,8 @@ class Parser:
 
         self._consume()
 
-    def _parse_function_arguments(self, function_name: str) -> int:
-        """Parse function arguments and return count and last element type."""
+    def _parse_function_arguments(self) -> int:
+        """Parse function arguments and return count."""
         num_args = 0
         last_element = FunctionTokenType.SEPARATOR
 
@@ -101,33 +101,32 @@ class Parser:
                         f"Invalid separator at position {self._pos}")
                 self._consume()
                 last_element = FunctionTokenType.SEPARATOR
-                continue
-
-            if self._is_function(token):
-                self._parse_function()
-                last_element = FunctionTokenType.FUNCTION
-            elif self._is_number(token):
-                if last_element != FunctionTokenType.SEPARATOR:
-                    raise SyntaxError(
-                        f"Number must be preceded by a separator at position {self._pos}")
-                self._consume()
-                num_args += 1
-                last_element = FunctionTokenType.NUMBER
-            elif self._is_cell_reference(token):
-                if last_element != FunctionTokenType.SEPARATOR:
-                    raise SyntaxError(
-                        f"Cell reference must be preceded by a separator at position {self._pos}")
-                self._consume()
-                num_args += 1
-                last_element = FunctionTokenType.CELL_REFERENCE
-
-                if self._peek() == ':':
-                    self._consume()
-                    self._validate_range(last_element)
-                    last_element = FunctionTokenType.CELL_RANGE
             else:
-                raise SyntaxError(f"Unexpected token '{
-                                  token}' at position {self._pos}")
+                if self._is_function(token):
+                    self._parse_function()
+                    last_element = FunctionTokenType.FUNCTION
+                elif self._is_number(token):
+                    if last_element != FunctionTokenType.SEPARATOR:
+                        raise SyntaxError(
+                            f"Number must be preceded by a separator at position {self._pos}")
+                    self._consume()
+                    num_args += 1
+                    last_element = FunctionTokenType.NUMBER
+                elif self._is_cell_reference(token):
+                    if last_element != FunctionTokenType.SEPARATOR:
+                        raise SyntaxError(
+                            f"Cell reference must be preceded by a separator at position {self._pos}")
+                    self._consume()
+                    num_args += 1
+                    last_element = FunctionTokenType.CELL_REFERENCE
+
+                    if self._peek() == ':':
+                        self._consume()
+                        self._validate_range(last_element)
+                        last_element = FunctionTokenType.CELL_RANGE
+                else:
+                    raise SyntaxError(f"Unexpected token '{
+                                      token}' at position {self._pos}")
 
         return num_args
 
@@ -140,7 +139,7 @@ class Parser:
                 f"Function '{function_name}' must be followed by '('")
         self._consume()
 
-        num_args = self._parse_function_arguments(function_name)
+        num_args = self._parse_function_arguments()
 
         if self._peek() != ')':
             raise SyntaxError(
