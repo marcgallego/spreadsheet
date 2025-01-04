@@ -10,7 +10,7 @@ class Tokenizer:
         self.__operators_and_delimiters = OPERATORS_AND_DELIMITERS
         self.__functions = FUNCTIONS
 
-    def _is_valid_number_character(self, char: str) -> bool:
+    def _is_valid_numeric_char(self, char: str) -> bool:
         """Checks if a character is a digit or the decimal separator."""
         return char.isdigit() or char == self.__decimal_separator
 
@@ -20,7 +20,7 @@ class Tokenizer:
         decimal_separator_seen = False
         n = len(expression)
         i = start_index
-        while i < n and self._is_valid_number_character(expression[i]):
+        while i < n and self._is_valid_numeric_char(expression[i]):
             if expression[i] == self.__decimal_separator:
                 if decimal_separator_seen:
                     raise ValueError(
@@ -57,7 +57,7 @@ class Tokenizer:
             char = expression[i]
             if char.isspace():
                 i += 1
-            elif self._is_valid_number_character(char):  # Handle numbers
+            elif self._is_valid_numeric_char(char):  # Handle numbers
                 num, i = self._extract_number(expression, i)
                 self.__tokens.append(num)
             elif char.isalpha():  # Handle cells and functions
