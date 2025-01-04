@@ -9,7 +9,8 @@ from domain.formula_evaluation.parser import Parser
 def main() -> None:
     print('Simple Spreadsheet')
     controller = Controller()
-    controller.spreadsheet.edit_cell('A1', Number(10))
+    controller.spreadsheet.edit_cell('A3', Number(10))
+    controller.spreadsheet.edit_cell('B4', Number(30))
 
     tk = Tokenizer()
     p = Parser()
@@ -20,7 +21,8 @@ def main() -> None:
 
     range_ = CellRange(start=Coordinates(1, 2), end=Coordinates(3, 3))
     print(range_)
-    print(range_.get_all_coords())
+    print(range_.get_coords())
+    print(controller.spreadsheet.get_values(range_))
 
 
 if __name__ == '__main__':

@@ -31,7 +31,7 @@ class Number(Content):
     def __init__(self, value: float) -> None:
         self.value = value
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.value)
 
     def set_value(self, value: float) -> None:
