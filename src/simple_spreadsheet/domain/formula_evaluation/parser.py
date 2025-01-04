@@ -1,7 +1,7 @@
 from enum import Enum, auto
 from typing import Optional
 from domain.coordinates import Coordinates
-from domain.formula_evaluation.consts import Token, OPERATORS, UNARY_OPERATORS, SEPARATORS, FUNCTIONS, RANGE_SEPARATOR
+from domain.formula_evaluation.consts import Token, OPERATORS, UNARY_OPERATORS, SEPARATORS, FUNCTIONS, RANGE_SEPARATOR, PARAM_SEPARATOR
 
 
 class FormulaTokenType(Enum):
@@ -32,6 +32,8 @@ class Parser:
         self._unary_operators = frozenset(UNARY_OPERATORS)
         self._separators = frozenset(SEPARATORS)
         self._functions = frozenset(FUNCTIONS)
+        self._range_separator = RANGE_SEPARATOR
+        self._param_separator = PARAM_SEPARATOR
 
     def _is_token_type(self, token: Token, collection: frozenset) -> bool:
         """Generic token type checker."""

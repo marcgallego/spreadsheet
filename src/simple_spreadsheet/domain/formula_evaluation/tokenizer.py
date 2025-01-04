@@ -1,13 +1,13 @@
 from typing import Union
 from domain.coordinates import Coordinates
-from domain.formula_evaluation.consts import Token, DECIMAL_SEPARATOR, OPERATORS_AND_DELIMITERS, FUNCTIONS
+from domain.formula_evaluation.consts import Token, DECIMAL_SEPARATOR, SPECIAL_CHARS, FUNCTIONS
 
 
 class Tokenizer:
     def __init__(self) -> None:
         self._tokens: list[Token] = []
         self._decimal_separator = DECIMAL_SEPARATOR
-        self._operators_and_delimiters = OPERATORS_AND_DELIMITERS
+        self._special_chars = SPECIAL_CHARS
         self._functions = FUNCTIONS
 
     def _is_valid_numeric_char(self, char: str) -> bool:
@@ -63,7 +63,7 @@ class Tokenizer:
             elif char.isalpha():  # Handle cells and functions
                 var, i = self._extract_cell_or_function(expression, i)
                 self._tokens.append(var)
-            elif char in self._operators_and_delimiters:  # Handle operators and delimiters
+            elif char in self._special_chars:  # Handle operators and delimiters
                 self._tokens.append(char)
                 i += 1
             else:  # Invalid character
