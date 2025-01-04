@@ -175,8 +175,8 @@ class Parser:
             self._consume()
             return
 
-        raise SyntaxError(f"Unexpected token '{
-                          token}' at position {self._pos}")
+        raise SyntaxError(f"Unexpected token '{token}' \
+                           at position {self._pos}")
 
     def _parse_unary(self) -> None:
         """Parse unary operators."""
