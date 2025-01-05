@@ -179,12 +179,15 @@ class Parser:
                            at position {self._pos}")
 
     def _parse_unary(self) -> None:
-        """Parse unary operators."""
-        if (token := self._peek()) and self._can_be_unary_operator(token):
+        """Parse unary operators, supporting multiple consecutive unary operators."""
+        unary_count = 0
+
+        while (token := self._peek()) and self._can_be_unary_operator(token):
             self._consume()
-            self._parse_primary()
-        else:
-            self._parse_primary()
+            unary_count += 1
+
+        # After consuming all unary operators, process the primary expression.
+        self._parse_primary()
 
     def _parse_binary_operation(self) -> None:
         """Parse binary operations with operator precedence."""
