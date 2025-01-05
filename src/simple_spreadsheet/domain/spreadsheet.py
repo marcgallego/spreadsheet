@@ -1,6 +1,6 @@
 from .cell import Cell
 from .contents import Content
-from .coordinates import Coordinates
+from .coordinates import Coordinates, Column
 from .cell_range import CellRange
 from .consts import NUM_ROWS, NUM_COLS, ABC_LEN
 
@@ -16,10 +16,7 @@ class Spreadsheet:
     def _generate_cols(self) -> list[str]:
         cols = []
         for i in range(NUM_COLS):
-            col = ""
-            while i >= 0:
-                col = chr(i % ABC_LEN + ord('A')) + col
-                i = (i // ABC_LEN) - 1
+            col = Column.letters_from_number(i)
             cols.append(col)
         return cols
 
