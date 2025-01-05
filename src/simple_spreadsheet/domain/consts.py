@@ -1,4 +1,2 @@
 NUM_ROWS = 100
 NUM_COLS = 100
-
-ABC_LEN = 26

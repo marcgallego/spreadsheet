@@ -1,8 +1,11 @@
 import re
-from .consts import NUM_ROWS, NUM_COLS, ABC_LEN
+from .consts import NUM_ROWS, NUM_COLS
+
+ABC_LEN = 26
 
 
 class Column:
+
     @staticmethod
     def number_from_letters(letters: str) -> int:
         num = 0
