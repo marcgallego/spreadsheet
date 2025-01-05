@@ -1,7 +1,6 @@
 import re
-from .consts import NUM_ROWS, NUM_COLS
+from .consts import NUM_ROWS, NUM_COLS, ABC_LEN
 
-ABC_LEN = 26
 
 
 class Coordinates:
