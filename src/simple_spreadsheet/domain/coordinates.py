@@ -2,7 +2,6 @@ import re
 from .consts import NUM_ROWS, NUM_COLS, ABC_LEN
 
 
-
 class Coordinates:
     def __init__(self, row: int, col: int) -> None:
         self.row = row
@@ -32,6 +31,7 @@ class Coordinates:
         row = 0
         for i, char in enumerate(reversed(row_str)):
             row += (ord(char) - ord('A') + 1) * (ABC_LEN ** i)
+        row -= 1
 
         col_str = ''.join(filter(str.isdigit, cell_id))
         col = int(col_str) - 1
