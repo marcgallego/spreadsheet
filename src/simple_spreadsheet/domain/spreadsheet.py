@@ -16,10 +16,10 @@ class Spreadsheet:
     def _generate_cols(self) -> list[str]:
         cols = []
         for i in range(NUM_COLS):
-            col = ''
+            col = ""
             while i >= 0:
-                col = chr(i % ABC_LEN + 65) + col
-                i = i // ABC_LEN - 1
+                col = chr(i % ABC_LEN + ord('A')) + col
+                i = (i // ABC_LEN) - 1
             cols.append(col)
         return cols
 
@@ -49,5 +49,7 @@ class Spreadsheet:
         return [[cell.get_value() for cell in row] for row in self._cells]
 
     def edit_cell(self, cell_id: str, content: Content) -> None:
+        if not isinstance(content, Content):
+            raise TypeError(f"Invalid content type: {type(content)}")
         cell = self.get_cell(cell_id)
         cell.set_value(content)
