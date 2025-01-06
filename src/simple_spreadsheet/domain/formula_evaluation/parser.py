@@ -8,8 +8,8 @@ from .consts import OPERATORS, UNARY_OPERATORS, FUNCTIONS, RANGE_SEPARATOR, PARA
 
 class ComponentType(Enum):
     """Types of components in a formula."""
-    OPERATOR = auto()
-    OPERAND = auto()
+    OPERATOR = auto() # Binary operators
+    OPERAND = auto() # Number, cell reference, or function
 
 
 class Component:
@@ -68,8 +68,8 @@ class Parser:
                 arg, i = self.parse_function(tokens, i)
                 args.append(arg)
             elif token in self._unary_operators:
+                next_token = tokens[i + 1]
                 if token == "-":
-                    next_token = tokens[i + 1]
                     args.append(-next_token)
                 else:
                     args.append(next_token)
