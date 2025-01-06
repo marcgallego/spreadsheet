@@ -5,7 +5,6 @@ ABC_LEN = 26
 
 
 class Column:
-
     @staticmethod
     def number_from_letters(letters: str) -> int:
         num = 0
@@ -36,6 +35,9 @@ class Coordinates:
 
     @classmethod
     def from_id(cls, cell_id: str) -> 'Coordinates':
+        if not isinstance(cell_id, str):
+            raise TypeError(f"Expected cell_id to be a string, got {
+                            type(cell_id).__name__}")
         cell_id = cell_id.upper()
         cls.is_valid_id(cell_id)
         row, col = cls.parse_id(cell_id)
@@ -68,3 +70,13 @@ class Coordinates:
 
     def get_indices(self) -> tuple[int, int]:
         return self._row, self._col
+
+    @property
+    def row(self) -> int:
+        """Returns the row index (zero-based)."""
+        return self._row
+
+    @property
+    def col(self) -> int:
+        """Returns the column index (zero-based)."""
+        return self._col
