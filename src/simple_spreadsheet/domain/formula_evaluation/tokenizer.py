@@ -1,6 +1,6 @@
 from typing import Union
 from domain.coordinates import Coordinates
-from domain.formula_evaluation.consts import Token, DECIMAL_SEPARATOR, SPECIAL_CHARS, FUNCTIONS
+from .consts import Token, DECIMAL_SEPARATOR, SPECIAL_CHARS, FUNCTIONS
 
 
 class Tokenizer:

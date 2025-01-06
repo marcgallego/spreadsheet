@@ -1,7 +1,7 @@
 from enum import Enum, auto
 from typing import Optional
 from domain.coordinates import Coordinates
-from domain.formula_evaluation.consts import Token, OPERATORS, UNARY_OPERATORS, SEPARATORS, FUNCTIONS, RANGE_SEPARATOR, PARAM_SEPARATOR
+from .consts import Token, OPERATORS, UNARY_OPERATORS, SEPARATORS, FUNCTIONS, RANGE_SEPARATOR, PARAM_SEPARATOR
 
 
 class FormulaTokenType(Enum):
