@@ -7,10 +7,10 @@ class Content(ABC):
         pass
 
     @abstractmethod
-    def get_numeric_value(self) -> float | int:
+    def get_numeric_value(self) -> float:
         pass
 
-    def get_value(self) -> float | int | str:
+    def get_value(self) -> float | str:
         return self.value
 
 
@@ -45,7 +45,7 @@ class Number(Content):
     def __init__(self, value: float | int) -> None:
         if not isinstance(value, (float, int)):
             raise ValueError('Value must be a number')
-        self.value = value
+        self.value = float(value)
 
     def __str__(self) -> str:
         return str(self.value)
@@ -53,7 +53,7 @@ class Number(Content):
     def set_value(self, value: float) -> None:
         self.value = value
 
-    def get_numeric_value(self) -> int | float:
+    def get_numeric_value(self) -> float:
         return self.value
 
 
