@@ -7,10 +7,10 @@ class Content(ABC):
         pass
 
     @abstractmethod
-    def get_numeric_value(self) -> float:
+    def get_value(self) -> float:
         pass
 
-    def get_value(self) -> float | str:
+    def get_raw_value(self) -> float | str:
         return self.value
 
 
@@ -37,7 +37,7 @@ class Formula(Content):
     def set_value(self, expression: str) -> None:
         self.expression = expression
 
-    def get_numeric_value(self) -> float:
+    def get_value(self) -> float:
         return self.value
 
 
@@ -53,7 +53,7 @@ class Number(Content):
     def set_value(self, value: float) -> None:
         self.value = value
 
-    def get_numeric_value(self) -> float:
+    def get_value(self) -> float:
         return self.value
 
 
@@ -69,5 +69,5 @@ class Text(Content):
     def set_value(self, value: str) -> None:
         self.value = value
 
-    def get_numeric_value(self) -> float:
+    def get_value(self) -> float:
         return float(self.value)

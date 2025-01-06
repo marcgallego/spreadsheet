@@ -1,3 +1,5 @@
+from functools import singledispatchmethod
+
 from .cell import Cell
 from .contents import Content
 from .coordinates import Coordinates, Column
@@ -26,24 +28,31 @@ class Spreadsheet:
     def get_columns(self) -> list[str]:
         return self._cols
 
-    def get_cell_from_coords(self, coords: Coordinates) -> Cell:
+    @singledispatchmethod
+    def get_cell(self, _) -> 'Cell':
+        raise NotImplementedError("Unsupported type")
+
+    @get_cell.register
+    def _(self, coords: 'Coordinates') -> 'Cell':
         row, col = coords.get_indices()
         return self._cells[row][col]
 
-    def get_cell(self, cell_id: str) -> Cell:
-        coord = Coordinates.from_id(cell_id)
-        return self.get_cell_from_coords(coord)
+    @get_cell.register
+    def _(self, cell_id: str) -> 'Cell':
+        coords = Coordinates.from_id(cell_id)
+        return self.get_cell(coords)
 
     def get_values(self, cell_range: CellRange) -> list[Content]:
         values = []
         coords_list = cell_range.get_coords()
         for coords in coords_list:
-            cell = self.get_cell_from_coords(coords)
+            cell = self.get_cell(coords)
             values.append(cell.get_value())
         return values
 
+    # TODO: rename
     def get_all_values(self) -> list[list[Content]]:
-        return [[cell.get_value() for cell in row] for row in self._cells]
+        return [[cell.get_raw_value() for cell in row] for row in self._cells]
 
     def edit_cell(self, cell_id: str, content: Content) -> None:
         if not isinstance(content, Content):
