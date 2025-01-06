@@ -127,8 +127,8 @@ class Validator:
                         self._validate_range(last_element)
                         last_element = FunctionTokenType.CELL_RANGE
                 else:
-                    raise SyntaxError(f"Unexpected token '{token}' \
-                                       at position {self._pos}")
+                    raise SyntaxError(f"Unexpected token '{
+                                      token}' at position {self._pos}")
 
         return num_args
 
@@ -175,8 +175,8 @@ class Validator:
             self._consume()
             return
 
-        raise SyntaxError(f"Unexpected token '{token}' \
-                           at position {self._pos}")
+        raise SyntaxError(f"Unexpected token '{
+                          token}' at position {self._pos}")
 
     def _parse_unary(self) -> None:
         """Parse unary operators, supporting multiple consecutive unary operators."""
@@ -216,8 +216,8 @@ class Validator:
             self._parse_expression()
 
             if self._peek() is not None:
-                raise SyntaxError(f"Unexpected token '{self._peek()}' \
-                                   at position {self._pos}")
+                raise SyntaxError(f"Unexpected token '{
+                                  self._peek()}' at position {self._pos}")
 
         except SyntaxError:
             raise
