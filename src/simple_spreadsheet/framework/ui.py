@@ -14,6 +14,7 @@ class UserInterface(App):
 
         cols = self.spreadsheet.get_columns()
         table.add_columns("", *cols)
+        table.fixed_columns = 1
 
         rows = self.spreadsheet.get_rows()
         vals = self.spreadsheet.get_all_values()
@@ -22,6 +23,6 @@ class UserInterface(App):
         for i in range(n):
             row_name = rows[i]
             row_vals = vals[i]
-            table.add_row(row_name, *row_vals)
+            table.add_row(row_name, *row_vals, key=row_name)
 
         yield table
