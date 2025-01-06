@@ -15,6 +15,7 @@ class FormulaTokenType(Enum):
 class FunctionTokenType(Enum):
     """Types of tokens within a function call."""
     FUNCTION = auto()
+    UNARY_OPERATOR = auto()
     NUMBER = auto()
     CELL_REFERENCE = auto()
     CELL_RANGE = auto()
@@ -107,8 +108,17 @@ class Validator:
                 if self._is_function(token):
                     self._parse_function()
                     last_element = FunctionTokenType.FUNCTION
-                elif self._is_number(token):
+                elif self._can_be_unary_operator(token):
                     if last_element != FunctionTokenType.SEPARATOR:
+                        raise SyntaxError(
+                            f"Unary operator must be preceded by a separator at position {self._pos}")
+                    self._consume()
+                    last_element = FunctionTokenType.UNARY_OPERATOR
+                    if not self._is_number(self._peek()):
+                        raise SyntaxError(
+                            f"Inside functions, unary operators must be followed by a number at position {self._pos}")
+                elif self._is_number(token):
+                    if last_element != FunctionTokenType.SEPARATOR and last_element != FunctionTokenType.UNARY_OPERATOR:
                         raise SyntaxError(
                             f"Number must be preceded by a separator at position {self._pos}")
                     self._consume()

@@ -11,8 +11,9 @@ class FormulaEvaluator:
 
     def evaluate(self, formula: str) -> float:
         tokens = self._tokenizer.tokenize(formula)
+        print(tokens)
         self._validator.has_syntax_error(tokens)
         components = self._parser.tokens_to_components(tokens)
         print(components)
-        postfix = self._parser.infix_to_postfix(components)
-        print(postfix)
+        # postfix = self._parser.infix_to_postfix(components)
+        # print(postfix)

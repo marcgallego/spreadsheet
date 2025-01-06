@@ -1,7 +1,9 @@
 from enum import Enum, auto
 from typing import Union, List
 
-from .consts import OPERATORS
+from ..functions import Function, FunctionFactory
+from ..cell_range import CellRange
+from .consts import OPERATORS, UNARY_OPERATORS, FUNCTIONS, RANGE_SEPARATOR, PARAM_SEPARATOR
 
 
 class ComponentType(Enum):
@@ -40,20 +42,66 @@ class Parser:
 
     def __init__(self) -> None:
         self._operators = OPERATORS
+        self._unary_operators = UNARY_OPERATORS
+        self._functions = FUNCTIONS
         self._precedence = {
             "*": 2, "/": 2,
             "+": 1, "-": 1,
         }
 
+    def parse_function(self, tokens: List[str], position: int) -> tuple[Function, int]:
+        """Parses a function call and returns a Function object."""
+        function_name = tokens[position]
+        args = []
+        i = position + 2  # Skip the function name and "("
+        n = len(tokens)
+
+        is_function_complete = False
+        while i < n and not is_function_complete:
+            token = tokens[i]
+            if token == ")":
+                is_function_complete = True
+                i += 1
+            elif token == PARAM_SEPARATOR:
+                i += 1
+            elif token in self._functions:
+                arg, i = self.parse_function(tokens, i)
+                args.append(arg)
+            elif token in self._unary_operators:
+                if token == "-":
+                    next_token = tokens[i + 1]
+                    args.append(-next_token)
+                else:
+                    args.append(next_token)
+                i += 2
+            elif isinstance(token, float):
+                args.append(token)
+                i += 1
+            else:  # Token is a cell reference (Coordinates)
+                if tokens[i + 1] == RANGE_SEPARATOR:
+                    range_end = tokens[i + 2]
+                    args.append(CellRange(token, range_end))
+                    i += 3
+                else:
+                    args.append(token)
+                    i += 1
+
+        function = FunctionFactory.create(function_name, args)
+        return function, i
+
     def tokens_to_components(self, tokens: List[str]) -> List[Component]:
         """Converts a list of tokens into Component objects."""
         components = []
 
-        for token in tokens:
-            if token in self._operators:
-                components.append(Operator(token))
+        i = 0
+        while i < len(tokens):
+            token = tokens[i]
+            if token in self._functions:
+                function, i = self.parse_function(tokens, i)
+                components.append(function)
             else:
-                components.append(Operand(token))
+                components.append(token)
+                i += 1
 
         return components
 
