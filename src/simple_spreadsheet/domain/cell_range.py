@@ -14,6 +14,9 @@ class CellRange:
 
         self._coords_in_range: list[Coordinates] = self._list_coords_in_range()
 
+    def __repr__(self) -> str:
+        return f'{self._top_left_corner}:{self._bottom_right_corner}'
+
     def _list_coords_in_range(self) -> list[Coordinates]:
         coords = []
         for row in range(self._top_left_corner.row, self._bottom_right_corner.row + 1):

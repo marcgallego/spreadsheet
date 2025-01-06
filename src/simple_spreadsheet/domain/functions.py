@@ -13,6 +13,9 @@ class Function(ABC):
         self._args = args
         self._validate_args()
 
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__.upper()}{self._args}"
+
     def _is_valid_argument(self, arg: Argument) -> bool:
         return isinstance(arg, (float, Coordinates, CellRange, Function))
 
