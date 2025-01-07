@@ -25,7 +25,7 @@ class Grid(DataTable):
 
         yield from super().compose()
 
-    def on_data_table_cell_selected(self, message) -> None:
+    def on_data_table_cell_highlighted(self, message) -> None:
         ui_coords = message.coordinate
         if ui_coords.column == 0:  # Ignore row names
             return
@@ -35,6 +35,8 @@ class Grid(DataTable):
 
         cell_content = str(cell.get_content())
         self.app.text_input.value = cell_content if cell_content != "None" else ""
+
+    def on_data_table_cell_selected(self, _) -> None:
         self.app.text_input.focus()
 
 
@@ -99,8 +101,6 @@ class UserInterface(App):
                 update_width=True
             )
 
-            # Clear the input
-            self.text_input.value = ""
             # unselect the cell
             self.grid.selected_row = None
             self.grid.selected_col = None
