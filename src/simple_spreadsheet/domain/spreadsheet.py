@@ -42,6 +42,11 @@ class Spreadsheet:
         coords = Coordinates.from_id(cell_id)
         return self.get_cell(coords)
 
+    @get_cell.register
+    def _(self, row: int, col: int) -> 'Cell':
+        coords = Coordinates(row, col)
+        return self.get_cell(coords)
+
     def get_values(self, cell_range: CellRange) -> list[Content]:
         values = []
         coords_list = cell_range.get_coords()
