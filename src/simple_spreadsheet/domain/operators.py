@@ -1,6 +1,8 @@
 from typing import Union
+from enum import Enum, auto
 from abc import ABC, abstractmethod
 
+from .formula_component import FormulaComponent, ComponentType
 from .coordinates import Coordinates
 from .functions import Function
 from .spreadsheet import Spreadsheet
@@ -8,12 +10,9 @@ from .spreadsheet import Spreadsheet
 type Operand = Union[float, Coordinates, Function]
 
 
-class FormulaComponent(ABC):
-    pass
-
-
 class BinaryOperator(FormulaComponent):
     _symbol: str
+    _type = ComponentType.OPERATOR
 
     @abstractmethod
     def _compute(self, left_value: float, right_value: float) -> float:
@@ -45,7 +44,14 @@ class BinaryOperator(FormulaComponent):
             return operand.evaluate(spreadsheet)
         raise TypeError(f"Unexpected operand type: {type(operand)}")
 
+    def get_type(self) -> str:
+        return self._type
+
     def __repr__(self) -> str:
+        return self._symbol
+
+    @property
+    def symbol(self) -> str:
         return self._symbol
 
 

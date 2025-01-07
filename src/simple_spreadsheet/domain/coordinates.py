@@ -1,4 +1,5 @@
 import re
+from .formula_component import FormulaComponent, ComponentType
 from .consts import NUM_ROWS, NUM_COLS
 
 ABC_LEN = 26
@@ -23,7 +24,9 @@ class Column:
         return letters
 
 
-class Coordinates:
+class Coordinates(FormulaComponent):
+    _type = ComponentType.OPERAND
+
     def __init__(self, row: int, col: int) -> None:
         self._row = row
         self._col = col

@@ -1,27 +1,14 @@
 from enum import Enum, auto
 from typing import Union, List
 
+from ..formula_component import ComponentType, OpeningParenthesis, ClosingParenthesis
 from ..functions import Function, FunctionFactory
 from ..cell_range import CellRange
-from ..operators import BinaryOperatorFactory
+from ..operators import BinaryOperatorFactory, BinaryOperator
+from ..coordinates import Coordinates
 from .consts import OPERATORS, UNARY_OPERATORS, FUNCTIONS, RANGE_SEPARATOR, PARAM_SEPARATOR
 
-
-class ComponentType(Enum):
-    """Types of components in a formula."""
-    OPERATOR = auto()  # Binary operators
-    OPERAND = auto()  #  Number, cell reference, or function
-
-
-class Component:
-    """Base class representing a component in a formula."""
-
-    def __init__(self, value: str, component_type: ComponentType) -> None:
-        self.value = value
-        self.component_type = component_type
-
-    def __repr__(self) -> str:
-        return f"{self.__class__.__name__}(value={self.value})"
+type Component = Union[float, Coordinates, Function, BinaryOperator]
 
 
 class Parser:
@@ -90,6 +77,12 @@ class Parser:
             elif token in self._operators:
                 components.append(BinaryOperatorFactory.create(token))
                 i += 1
+            elif token == "(":
+                components.append(OpeningParenthesis())
+                i += 1
+            elif token == ")":
+                components.append(ClosingParenthesis())
+                i += 1
             else:
                 components.append(token)
                 i += 1
@@ -103,20 +96,23 @@ class Parser:
         precedence = self._precedence
 
         for component in components:
-            if component.component_type == ComponentType.OPERAND:
+            # TODO: float will be Number in the future, so this will need to be updated
+            component_type = component.get_type() if not isinstance(
+                component, float) else ComponentType.OPERAND
+
+            if component_type == ComponentType.OPERAND:
                 output.append(component)
-            elif component.component_type == ComponentType.OPERATOR:
-                while (stack and
-                       isinstance(stack[-1], Operator) and
-                       precedence.get(stack[-1].value, 0) >= precedence.get(component.value, 0)):
+            elif component_type == ComponentType.OPERATOR:
+                while (stack and isinstance(stack[-1], BinaryOperator) and
+                       precedence.get(stack[-1].symbol, 0) >= precedence.get(component.symbol, 0)):
                     output.append(stack.pop())
                 stack.append(component)
-            elif component.value == "(":
+            elif component_type == ComponentType.OPENING_PARENTHESIS:
                 stack.append(component)
-            elif component.value == ")":
-                while stack and stack[-1].value != "(":
+            elif component_type == ComponentType.CLOSING_PARENTHESIS:
+                while stack and stack[-1].symbol != "(":
                     output.append(stack.pop())
-                if stack and stack[-1].value == "(":
+                if stack and stack[-1].symbol == "(":
                     stack.pop()
 
         while stack:

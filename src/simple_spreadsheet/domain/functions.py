@@ -1,6 +1,7 @@
 from typing import Union
 from abc import ABC, abstractmethod
 
+from domain.formula_component import FormulaComponent, ComponentType
 from domain.coordinates import Coordinates
 from domain.cell_range import CellRange
 from domain.spreadsheet import Spreadsheet
@@ -8,7 +9,9 @@ from domain.spreadsheet import Spreadsheet
 type Argument = Union[float, Coordinates, CellRange, Function]
 
 
-class Function(ABC):
+class Function(FormulaComponent):
+    _type = ComponentType.OPERAND
+
     def __init__(self, args: list[Argument]) -> None:
         self._args = args
         self._validate_args()
