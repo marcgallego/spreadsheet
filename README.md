@@ -2,6 +2,8 @@
 
 ## How to run locally
 
+### Prepare the environment
+
 1. Clone the repository and navigate to the project directory
 2. Create a virtual environment
 
@@ -32,4 +34,16 @@ python src/simple_spreadsheet/main.py
 ```
 cd tests/automatic_grader
 PYTHONPATH=$PYTHONPATH:.:../../../spreadsheet python markerrun/TestsRunner.py
+```
+
+### Useful commands
+
+Once everything is set up, these one-liners can be used to run the application and the tests respectively.
+
+```
+source venv/bin/activate && python src/simple_spreadsheet/main.py
+```
+
+```
+source venv/bin/activate && cd tests/automatic_grader && PYTHONPATH=$PYTHONPATH:.:../../../spreadsheet python markerrun/TestsRunner.py
 ```
