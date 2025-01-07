@@ -19,28 +19,30 @@ class Function(FormulaComponent):
     def __repr__(self) -> str:
         return f"{self.__class__.__name__.upper()}{self._args}"
 
-    def _is_valid_argument(self, arg: Argument) -> bool:
-        return isinstance(arg, (float, Coordinates, CellRange, Function))
-
     def _validate_args(self) -> None:
         if not self._args:
             raise ValueError("Function must have at least one argument")
-        for arg in self._args:
-            if not self._is_valid_argument(arg):
-                raise TypeError(f"Invalid argument type: {type(arg)}")
 
     def _evaluate_argument(self, arg: Argument, spreadsheet: Spreadsheet) -> list[float]:
-        """Evaluates a single argument and returns a list of values."""
+        """Evaluates an argument and returns numeric values, excluding `None`."""
         if isinstance(arg, float):
             return [arg]
-        elif isinstance(arg, Coordinates):
-            cell = spreadsheet.get_cell(arg)
-            return [cell.get_value()]
-        elif isinstance(arg, CellRange):
-            return spreadsheet.get_values(arg)
-        elif isinstance(arg, Function):
-            return [arg.evaluate(spreadsheet)]
+        if isinstance(arg, Coordinates):
+            value = spreadsheet.get_cell(arg).get_value()
+            return [value] if value is not None else []
+        if isinstance(arg, CellRange):
+            return [v for v in spreadsheet.get_values(arg) if v is not None]
+        if isinstance(arg, Function):
+            result = arg.evaluate(spreadsheet)
+            return [result] if result is not None else []
         raise TypeError(f"Unsupported argument type: {type(arg)}")
+
+    def _get_values(self, spreadsheet: Spreadsheet) -> list[float]:
+        """Evaluates all arguments and combines valid values."""
+        values = []
+        for arg in self._args:
+            values.extend(self._evaluate_argument(arg, spreadsheet))
+        return values
 
     @abstractmethod
     def evaluate(self, spreadsheet: Spreadsheet) -> float:
@@ -63,31 +65,22 @@ class FunctionFactory:
 
 class Sum(Function):
     def evaluate(self, spreadsheet: Spreadsheet) -> float:
-        values = []
-        for arg in self._args:
-            values.extend(self._evaluate_argument(arg, spreadsheet))
-        return sum(values)
+        return sum(self._get_values(spreadsheet))
 
 
 class Min(Function):
     def evaluate(self, spreadsheet: Spreadsheet) -> float:
-        values = []
-        for arg in self._args:
-            values.extend(self._evaluate_argument(arg, spreadsheet))
-        return min(values)
+        values = self._get_values(spreadsheet)
+        return min(values, default=0.0)
 
 
 class Max(Function):
     def evaluate(self, spreadsheet: Spreadsheet) -> float:
-        values = []
-        for arg in self._args:
-            values.extend(self._evaluate_argument(arg, spreadsheet))
-        return max(values)
+        values = self._get_values(spreadsheet)
+        return max(values, default=0.0)
 
 
 class Average(Function):
     def evaluate(self, spreadsheet: Spreadsheet) -> float:
-        values = []
-        for arg in self._args:
-            values.extend(self._evaluate_argument(arg, spreadsheet))
-        return sum(values) / len(values)
+        values = self._get_values(spreadsheet)
+        return sum(values) / len(values) if values else 0.0
