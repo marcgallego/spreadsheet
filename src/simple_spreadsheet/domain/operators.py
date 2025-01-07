@@ -5,10 +5,14 @@ from .coordinates import Coordinates
 from .functions import Function
 from .spreadsheet import Spreadsheet
 
-Operand = Union[float, Coordinates, Function]
+type Operand = Union[float, Coordinates, Function]
 
 
-class BinaryOperator(ABC):
+class FormulaComponent(ABC):
+    pass
+
+
+class BinaryOperator(FormulaComponent):
     _symbol: str
 
     @abstractmethod
@@ -43,6 +47,20 @@ class BinaryOperator(ABC):
 
     def __repr__(self) -> str:
         return self._symbol
+
+
+class BinaryOperatorFactory:
+    @staticmethod
+    def create(symbol: str) -> BinaryOperator:
+        if symbol == '+':
+            return Plus()
+        if symbol == '-':
+            return Minus()
+        if symbol == '*':
+            return Multiply()
+        if symbol == '/':
+            return Divide()
+        raise ValueError(f"Unsupported operator: {symbol}")
 
 
 class Plus(BinaryOperator):
