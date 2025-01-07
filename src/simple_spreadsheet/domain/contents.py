@@ -1,7 +1,18 @@
 from abc import ABC, abstractmethod
+from enum import Enum, auto
+
+from .formula_component import FormulaComponent
+
+
+class ContentType(Enum):
+    TEXT = auto()
+    NUMBER = auto()
+    FORMULA = auto()
 
 
 class Content(ABC):
+    _type: ContentType
+
     @abstractmethod
     def set_value(self) -> None:
         pass
@@ -11,7 +22,11 @@ class Content(ABC):
         pass
 
     def get_raw_value(self) -> float | str:
-        return self.value
+        return self._value
+
+    @property
+    def type(self) -> ContentType:
+        return self._type
 
 
 class ContentFactory():
@@ -25,49 +40,71 @@ class ContentFactory():
 
 
 class Formula(Content):
+    _type = ContentType.FORMULA
+
     def __init__(self, expression: str) -> None:
-        self.expression = expression[1:] if \
-            expression.startswith('=') else expression
-        self.postfix = None
-        self.value = None
+        if not isinstance(expression, str):
+            raise ValueError('Expression must be a string')
+
+        self._expression = expression[1:]
+        self._postfix = None
+        self._value = None
 
     def __str__(self) -> str:
-        return '=' + self.expression
+        return '=' + self._expression
 
-    def set_value(self, expression: str) -> None:
-        self.expression = expression
+    def set_expression(self, expression: str) -> None:
+        self._expression = expression
+
+    def get_expression(self) -> str:
+        return self._expression
+
+    def set_postfix(self, postfix: list[FormulaComponent]) -> None:
+        self._postfix = postfix
+
+    def get_postfix(self) -> list[FormulaComponent]:
+        return self._postfix
+
+    def set_value(self, value: float) -> None:
+        self._value = value
 
     def get_value(self) -> float:
-        return self.value
+        return self._value
+
+    # TODO: caldrà implementar un mètode per a gravar com a fitxer
 
 
 class Number(Content):
+    _type = ContentType.NUMBER
+
     def __init__(self, value: float | int) -> None:
         if not isinstance(value, (float, int)):
             raise ValueError('Value must be a number')
-        self.value = float(value)
+        self._value = float(value)
 
     def __str__(self) -> str:
-        return str(self.value)
+        return str(self._value)
 
     def set_value(self, value: float) -> None:
-        self.value = value
+        self._value = value
 
     def get_value(self) -> float:
-        return self.value
+        return self._value
 
 
 class Text(Content):
+    _type = ContentType.TEXT
+
     def __init__(self, value: str) -> None:
         if not isinstance(value, str):
             raise ValueError('Value must be a string')
-        self.value = value
+        self._value = value
 
     def __str__(self) -> str:
-        return self.value
+        return self._value
 
     def set_value(self, value: str) -> None:
-        self.value = value
+        self._value = value
 
     def get_value(self) -> float:
-        return float(self.value)
+        return float(self._value)
