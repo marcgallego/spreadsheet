@@ -41,8 +41,25 @@ class Grid(DataTable):
 class UserInterface(App):
     """App to display an Excel-like grid in Textual."""
 
+    CSS = """
+    Grid {
+        height: 1fr;
+        min-height: 0;
+    }
+
+    Input {
+        dock: bottom;
+        height: auto;
+        margin: 1 0;
+        border: solid green;
+    }
+
+    Footer {
+        dock: bottom;
+    }
+    """
+
     BINDINGS = [
-        Binding("e", "edit_cell", "Edit cell", show=True),
         Binding("q", "quit", "Quit", show=True),
     ]
 
@@ -55,7 +72,7 @@ class UserInterface(App):
     def compose(self) -> ComposeResult:
         yield self.grid
         yield self.text_input
-        yield Footer()
+        yield Footer(show_command_palette=False)
 
     def on_input_submitted(self, message: Input.Submitted) -> None:
         """Handle when the input field is submitted."""
@@ -84,3 +101,9 @@ class UserInterface(App):
 
             # Clear the input
             self.text_input.value = ""
+            # unselect the cell
+            self.grid.selected_row = None
+            self.grid.selected_col = None
+            self.grid.focus()
+
+            # TODO: deal with empty "" and how values are converted to Content
