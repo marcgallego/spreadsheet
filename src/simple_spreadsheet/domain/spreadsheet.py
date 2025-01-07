@@ -59,9 +59,8 @@ class Spreadsheet:
     def get_all_values(self) -> list[list[Content]]:
         return [[cell.get_raw_value() for cell in row] for row in self._cells]
 
-    # TODO: think if we want to go back to using Coordinates instead of row, col
-    def set_content(self, row, col, content: Content) -> None:
+    def set_content(self, coordinates, content: Content) -> None:
         if not isinstance(content, Content):
             raise TypeError(f"Invalid content type: {type(content)}")
-        cell = self.get_cell(row, col)
+        cell = self.get_cell(coordinates)
         cell.set_value(content)

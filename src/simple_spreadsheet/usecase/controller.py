@@ -1,6 +1,7 @@
 from functools import singledispatchmethod
 
 from domain.spreadsheet import Spreadsheet
+from domain.coordinates import Coordinates
 from domain.contents import ContentFactory, ContentType
 from domain.formula_evaluation import FormulaEvaluator
 from framework.ui import UserInterface
@@ -16,20 +17,33 @@ class Controller:
         self._formula_evaluator = FormulaEvaluator()
         self._ui = UserInterface(self)
 
-        self.edit_cell(1, 1, 'Prova')
-        self.edit_cell(1, 2, '5')
-        self.edit_cell(2, 2, 10)
-        self.edit_cell(3, 2, 15)
-        self.edit_cell(4, 2, 20)
-        self.edit_cell(5, 2, 25)
-        self.edit_cell(6, 2, 30)
-        self.edit_cell(7, 2, '=SUMA(A5:A10)+10')
+        self.edit_cell('A1', 'Prova')
+        self.edit_cell('B2', '5')
+        self.edit_cell('B3', 10)
+        self.edit_cell('B4', 15)
+        self.edit_cell('B5', 20)
+        self.edit_cell('B6', 25)
+        self.edit_cell('B7', 30)
+        self.edit_cell('B10', '=SUMA(A5:A10)+10')
 
         self._ui.run()
 
-    def edit_cell(self, row, col, value: str) -> None:
+    def _create_and_assign_content(self, coords: Coordinates, value: str) -> None:
         new_content = ContentFactory.create(value)
         if new_content.type == ContentType.FORMULA:
             self._formula_evaluator.evaluate(new_content, self._spreadsheet)
-        self._spreadsheet.set_content(row, col, new_content)
-        # TODO: self._ui.update()
+        self._spreadsheet.set_content(coords, new_content)
+
+    @singledispatchmethod
+    def edit_cell(self, _) -> None:
+        raise NotImplementedError("Unsupported type")
+
+    @edit_cell.register
+    def _(self, cell_id: str, value: str) -> None:
+        coords = Coordinates.from_id(cell_id)
+        self._create_and_assign_content(coords, value)
+
+    @edit_cell.register
+    def _(self, row: int, col: int, value: str) -> None:
+        coords = Coordinates(row, col)
+        self._create_and_assign_content(coords, value)
