@@ -3,13 +3,14 @@ from typing import Union, List
 
 from ..functions import Function, FunctionFactory
 from ..cell_range import CellRange
+from ..operators import BinaryOperatorFactory
 from .consts import OPERATORS, UNARY_OPERATORS, FUNCTIONS, RANGE_SEPARATOR, PARAM_SEPARATOR
 
 
 class ComponentType(Enum):
     """Types of components in a formula."""
-    OPERATOR = auto() # Binary operators
-    OPERAND = auto() # Number, cell reference, or function
+    OPERATOR = auto()  # Binary operators
+    OPERAND = auto()  #  Number, cell reference, or function
 
 
 class Component:
@@ -21,20 +22,6 @@ class Component:
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}(value={self.value})"
-
-
-class Operator(Component):
-    """Represents an operator in a formula."""
-
-    def __init__(self, value: str) -> None:
-        super().__init__(value, ComponentType.OPERATOR)
-
-
-class Operand(Component):
-    """Represents an operand in a formula."""
-
-    def __init__(self, value: Union[str, float]) -> None:
-        super().__init__(value, ComponentType.OPERAND)
 
 
 class Parser:
@@ -69,7 +56,7 @@ class Parser:
                 args.append(arg)
             elif token in self._unary_operators:
                 next_token = tokens[i + 1]
-                if token == "-":
+                if token == '-':
                     args.append(-next_token)
                 else:
                     args.append(next_token)
@@ -91,6 +78,7 @@ class Parser:
 
     def tokens_to_components(self, tokens: List[str]) -> List[Component]:
         """Converts a list of tokens into Component objects."""
+        # TODO: unary operators not supported
         components = []
 
         i = 0
@@ -99,6 +87,9 @@ class Parser:
             if token in self._functions:
                 function, i = self.parse_function(tokens, i)
                 components.append(function)
+            elif token in self._operators:
+                components.append(BinaryOperatorFactory.create(token))
+                i += 1
             else:
                 components.append(token)
                 i += 1
