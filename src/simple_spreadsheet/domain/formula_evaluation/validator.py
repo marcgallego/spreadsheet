@@ -1,6 +1,6 @@
 from enum import Enum, auto
 from typing import Optional
-from domain.coordinates import Coordinates
+from simple_spreadsheet.domain.coordinates import Coordinates
 from .consts import Token, OPERATORS, UNARY_OPERATORS, SEPARATORS, FUNCTIONS, RANGE_SEPARATOR, PARAM_SEPARATOR
 
 

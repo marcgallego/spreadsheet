@@ -1,5 +1,5 @@
 from typing import Union
-from domain.coordinates import Coordinates
+from simple_spreadsheet.domain.coordinates import Coordinates
 from .consts import Token, DECIMAL_SEPARATOR, SPECIAL_CHARS, FUNCTIONS
 
 

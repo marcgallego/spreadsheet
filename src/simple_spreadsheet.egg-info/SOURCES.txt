@@ -1,0 +1,8 @@
+README.md
+setup.py
+src/simple_spreadsheet/__init__.py
+src/simple_spreadsheet/main.py
+src/simple_spreadsheet.egg-info/PKG-INFO
+src/simple_spreadsheet.egg-info/SOURCES.txt
+src/simple_spreadsheet.egg-info/dependency_links.txt
+src/simple_spreadsheet.egg-info/top_level.txt

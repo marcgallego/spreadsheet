@@ -1,10 +1,10 @@
 from typing import Union
 from abc import ABC, abstractmethod
 
-from domain.formula_component import FormulaComponent, ComponentType
-from domain.coordinates import Coordinates
-from domain.cell_range import CellRange
-from domain.spreadsheet import Spreadsheet
+from simple_spreadsheet.domain.formula_component import FormulaComponent, ComponentType
+from simple_spreadsheet.domain.coordinates import Coordinates
+from simple_spreadsheet.domain.cell_range import CellRange
+from simple_spreadsheet.domain.spreadsheet import Spreadsheet
 
 type Argument = Union[float, Coordinates, CellRange, Function]
 

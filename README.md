@@ -2,12 +2,34 @@
 
 ## How to run locally
 
-```
-PYTHONPATH=$PYTHONPATH:/Users/marc/Documents/spreadsheet/src/simple_spreadsheet
-```
-
-Inside src/simple_spreadsheet:
+1. Clone the repository and navigate to the project directory
+2. Create a virtual environment
 
 ```
-python main.py
+python3 -m venv venv
+```
+
+3. Activate the virtual environment
+
+```
+source venv/bin/activate
+```
+
+4. Install the dependencies
+
+```
+pip install -r requirements.txt
+```
+
+5. Run the application
+
+```
+python src/simple_spreadsheet/main.py
+```
+
+6. Run the tests
+
+```
+cd tests/automatic_grader
+PYTHONPATH=$PYTHONPATH:.:../../../spreadsheet python markerrun/TestsRunner.py
 ```
