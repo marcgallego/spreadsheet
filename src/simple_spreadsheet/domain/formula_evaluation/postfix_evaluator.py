@@ -1,5 +1,5 @@
 from ..spreadsheet import Spreadsheet
-from ..coordinates import Coordinates
+from ..functions import Function
 from ..formula_component import ComponentType, FormulaComponent
 
 
@@ -25,4 +25,8 @@ class PostfixEvaluator:
             raise ValueError(
                 "Invalid postfix expression: stack does not contain exactly one element.")
 
-        return stack.pop()
+        result = stack.pop()
+        if isinstance(result, Function):
+            return result.evaluate(spreadsheet)
+
+        return result
