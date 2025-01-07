@@ -50,7 +50,7 @@ class UserInterface(App):
     Input {
         dock: bottom;
         height: auto;
-        margin: 1 0;
+        margin: 0 0 1 0;
         border: solid green;
     }
 
@@ -107,3 +107,6 @@ class UserInterface(App):
             self.grid.focus()
 
             # TODO: deal with empty "" and how values are converted to Content
+        else:
+            self.text_input.value = ""
+            self.grid.focus()
