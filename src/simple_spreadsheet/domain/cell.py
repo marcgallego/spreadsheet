@@ -14,3 +14,8 @@ class Cell:
 
     def get_value(self) -> None | float:
         return self.content.get_value() if self.content else None
+
+    def get_raw_value(self) -> None | str:
+        return self.content.get_raw_value() if self.content else None
+
+    
