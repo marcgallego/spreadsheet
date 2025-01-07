@@ -24,7 +24,7 @@ class Controller:
         self.edit_cell('B5', 20)
         self.edit_cell('B6', 25)
         self.edit_cell('B7', 30)
-        self.edit_cell('B10', '=SUMA(A5:A10)+10')
+        self.edit_cell('B10', '=SUMA(B2:B7)+MIN(B2:B7)+MAX(B2:B7)')
 
         self._ui.run()
 
