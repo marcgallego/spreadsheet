@@ -15,7 +15,6 @@ class Controller:
     def __init__(self) -> None:
         self._spreadsheet = Spreadsheet()
         self._formula_evaluator = FormulaEvaluator()
-        self._ui = UserInterface(self)
 
         self.edit_cell('A1', 'Prova')
         self.edit_cell('B2', '5')
@@ -25,8 +24,6 @@ class Controller:
         self.edit_cell('B6', 25)
         self.edit_cell('B7', 30)
         self.edit_cell('B10', '=SUMA(B2:B7)+MIN(B2:B7)+MAX(B2:B7)')
-
-        self._ui.run()
 
     def create_new_spreadsheet(self) -> None:
         self._spreadsheet = Spreadsheet()

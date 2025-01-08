@@ -1,8 +1,11 @@
 from simple_spreadsheet.usecase.controller import Controller
+from simple_spreadsheet.framework.ui import UserInterface
 
 
 def main() -> None:
-    Controller()
+    controller = Controller()
+    app = UserInterface(controller)
+    app.run()
 
 
 if __name__ == '__main__':
