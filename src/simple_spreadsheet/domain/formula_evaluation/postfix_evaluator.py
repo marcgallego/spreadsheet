@@ -1,5 +1,6 @@
 from ..spreadsheet import Spreadsheet
 from ..functions import Function
+from ..coordinates import Coordinates
 from ..formula_component import ComponentType, FormulaComponent
 
 
@@ -28,5 +29,7 @@ class PostfixEvaluator:
         result = stack.pop()
         if isinstance(result, Function):
             return result.evaluate(spreadsheet)
+        if isinstance(result, Coordinates):
+            return spreadsheet.get_cell(result).get_value()
 
         return result
