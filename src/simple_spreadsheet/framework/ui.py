@@ -90,7 +90,10 @@ class Grid(DataTable):
         self.app.text_input.value = str(content) if content is not None else ""
 
     def on_data_table_cell_selected(self, _) -> None:
-        self.app.text_input.focus()
+        if self.selected_cell is not None:
+            self.app.text_input.focus()
+        else:
+            self.app.text_input.value += "ojut"
 
 
 class UserInterface(App):
@@ -155,6 +158,8 @@ class UserInterface(App):
     BINDINGS = [
         Binding("ctrl+c", "create", "New spreadsheet", show=True),
         Binding("ctrl+q", "quit", "Quit", show=True),
+        Binding("escape", "unfocus_input",
+                "Exit cell editing mode", show=True),
     ]
 
     def __init__(self, controller) -> None:
@@ -179,6 +184,12 @@ class UserInterface(App):
             self.grid.refresh_grid()
             self.text_input.value = ""
             self.refresh()
+
+    def action_unfocus_input(self) -> None:
+        """Handle unfocusing the input widget when 'Esc' is pressed."""
+        self.grid.selected_cell = None
+        self.text_input.blur()
+        self.grid.focus()
 
     def on_input_submitted(self, message: Input.Submitted) -> None:
         """Handle when the input field is submitted."""
