@@ -167,7 +167,7 @@ class UserInterface(App):
         super().__init__()
         self.controller = controller
         self.grid = Grid(controller)
-        self.text_input = Input(placeholder="Edit cell")
+        self.text_input = Input(placeholder="Edit cell", select_on_focus=False)
 
     def compose(self) -> ComposeResult:
         yield Header()
