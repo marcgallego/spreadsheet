@@ -1,4 +1,3 @@
-from functools import singledispatchmethod
 
 from simple_spreadsheet.domain.spreadsheet import Spreadsheet
 from simple_spreadsheet.domain.coordinates import Coordinates
@@ -16,7 +15,6 @@ class ControllerForChecker(ISpreadsheetControllerForChecker):
     def __init__(self) -> None:
         self._spreadsheet = Spreadsheet()
         self._formula_evaluator = FormulaEvaluator()
-        self._ui = UserInterface(self)
 
     def _create_and_assign_content(self, coords: Coordinates, value: str) -> None:
         new_content = ContentFactory.create(value)

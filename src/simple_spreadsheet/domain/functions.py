@@ -1,5 +1,5 @@
 from typing import Union
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 
 from simple_spreadsheet.domain.formula_component import FormulaComponent, ComponentType
 from simple_spreadsheet.domain.coordinates import Coordinates

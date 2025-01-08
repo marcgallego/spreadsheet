@@ -1,6 +1,5 @@
 from typing import Union
-from enum import Enum, auto
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 
 from .formula_component import FormulaComponent, ComponentType
 from .coordinates import Coordinates

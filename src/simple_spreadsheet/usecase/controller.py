@@ -4,7 +4,6 @@ from simple_spreadsheet.domain.spreadsheet import Spreadsheet
 from simple_spreadsheet.domain.coordinates import Coordinates
 from simple_spreadsheet.domain.contents import ContentFactory, ContentType
 from simple_spreadsheet.domain.formula_evaluation import FormulaEvaluator
-from simple_spreadsheet.framework.ui import UserInterface
 
 # TODO: update formulas automatically when a cell is edited
 # TODO: detect circular references
