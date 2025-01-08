@@ -56,7 +56,6 @@ class ConfirmDialog(ModalScreen[bool]):
 class Grid(DataTable):
     def __init__(self, controller) -> None:
         self.controller = controller
-        self.spreadsheet = controller._spreadsheet
         super().__init__(zebra_stripes=True)
         self.selected_cell = None
 
@@ -64,12 +63,12 @@ class Grid(DataTable):
         """Refresh the entire grid content."""
         self.clear()
 
-        cols = self.spreadsheet.get_columns()
+        cols = self.controller.spreadsheet.get_columns()
         self.add_columns("", *cols)
         self.fixed_columns = 1
 
-        rows = self.spreadsheet.get_rows()
-        vals = self.spreadsheet.get_all_values()
+        rows = self.controller.spreadsheet.get_rows()
+        vals = self.controller.spreadsheet.get_all_values()
 
         for i, row_name in enumerate(rows):
             row_vals = vals[i]
@@ -84,7 +83,7 @@ class Grid(DataTable):
         if ui_coords.column == 0:  # Ignore row names
             return
         self.selected_cell = Coordinates(ui_coords.row, ui_coords.column - 1)
-        cell = self.spreadsheet.get_cell(self.selected_cell)
+        cell = self.controller.spreadsheet.get_cell(self.selected_cell)
 
         content = cell.get_content()
         self.app.text_input.value = str(content) if content is not None else ""
@@ -167,7 +166,7 @@ class UserInterface(App):
         super().__init__()
         self.controller = controller
         self.grid = Grid(controller)
-        self.text_input = Input(placeholder="Edit cell", select_on_focus=False)
+        self.text_input = Input(placeholder="Edit cell")
 
     def compose(self) -> ComposeResult:
         yield Header()
@@ -181,7 +180,6 @@ class UserInterface(App):
         dialog = ConfirmDialog()
         if await self.push_screen_wait(dialog):
             self.controller.create_new_spreadsheet()
-            self.grid.spreadsheet = self.controller._spreadsheet
             self.grid.refresh_grid()
             self.text_input.value = ""
             self.refresh()
@@ -205,7 +203,7 @@ class UserInterface(App):
                 new_value
             )
 
-            display_value = self.controller._spreadsheet.get_cell(
+            display_value = self.controller.spreadsheet.get_cell(
                 self.grid.selected_cell).get_raw_value()
 
             # Update the grid display
@@ -223,3 +221,8 @@ class UserInterface(App):
         else:
             self.text_input.value = ""
             self.grid.focus()
+
+    def update_cell_view(self, coords: Coordinates, value: str) -> None:
+        """Edit a cell in the spreadsheet."""
+        position = (coords.row, coords.col+1)
+        self.grid.update_cell_at(position, value, update_width=True)

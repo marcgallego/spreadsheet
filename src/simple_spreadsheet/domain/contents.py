@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
 from enum import Enum, auto
 
-from .formula_component import FormulaComponent
+from .formula_component import FormulaComponent, ComponentType
+from .coordinates import Coordinates
 
 
 class ContentType(Enum):
@@ -70,6 +71,14 @@ class Formula(Content):
 
     def get_value(self) -> float:
         return self._value
+
+    def get_dependencies(self) -> set[Coordinates]:
+        dependencies = set()
+        for component in self._postfix:
+            if not isinstance(component, float) and component.get_type() == ComponentType.OPERAND:
+                dependencies.update(component.get_dependencies())
+
+        return dependencies
 
     # TODO: caldrà implementar un mètode per a gravar com a fitxer
 

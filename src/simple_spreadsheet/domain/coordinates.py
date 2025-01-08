@@ -61,6 +61,12 @@ class Coordinates(FormulaComponent):
 
         return row, col
 
+    def __eq__(self, value) -> bool:
+        return isinstance(value, Coordinates) and value.get_indices() == self.get_indices()
+
+    def __hash__(self) -> int:
+        return hash(self.get_indices())
+
     def _is_in_range(self) -> None:
         if not (0 <= self._row < NUM_ROWS and 0 <= self._col < NUM_COLS):
             raise ValueError('Cell out of range')
@@ -68,11 +74,15 @@ class Coordinates(FormulaComponent):
     def _parse_indices(self, row: int, col: int) -> str:
         return Column.letters_from_number(col) + str(row + 1)
 
-    def get_id(self) -> str:
-        return self.id
-
     def get_indices(self) -> tuple[int, int]:
         return self._row, self._col
+
+    def get_dependencies(self) -> set['Coordinates']:
+        return {self}
+
+    @property
+    def id(self) -> str:
+        return self._id
 
     @property
     def row(self) -> int:

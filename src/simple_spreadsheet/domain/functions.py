@@ -48,6 +48,17 @@ class Function(FormulaComponent):
     def evaluate(self, spreadsheet: Spreadsheet) -> float:
         pass
 
+    def get_dependencies(self) -> set[Coordinates]:
+        dependencies = set()
+        for arg in self._args:
+            if isinstance(arg, Coordinates):
+                dependencies.add(arg)
+            if isinstance(arg, CellRange):
+                dependencies.update(arg.get_coords())
+            if isinstance(arg, Function):
+                dependencies.update(arg.get_dependencies())
+        return dependencies
+
 
 class FunctionFactory:
     @staticmethod
