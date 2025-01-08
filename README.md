@@ -23,13 +23,20 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-5. Run the application
+5. Install as a package
+
+```
+pip install -e .
+
+```
+
+6. Run the application
 
 ```
 python src/simple_spreadsheet/main.py
 ```
 
-6. Run the tests
+7. Run the tests
 
 ```
 cd tests/automatic_grader
