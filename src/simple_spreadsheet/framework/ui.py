@@ -1,10 +1,9 @@
 from textual.app import App, ComposeResult
-from textual.widgets import DataTable, Footer, Input, Button, Static
+from textual.widgets import DataTable, Footer, Input, Button, Static, Header
 from textual.binding import Binding
 from textual.screen import ModalScreen
 from textual.containers import Container
 from textual import work
-
 
 from simple_spreadsheet.domain.coordinates import Coordinates
 
@@ -12,14 +11,53 @@ from simple_spreadsheet.domain.coordinates import Coordinates
 class ConfirmDialog(ModalScreen):
     """Simple confirmation dialog."""
 
+    DEFAULT_CSS = """
+    ConfirmDialog {
+        align: center middle;
+    }
+
+    #dialog-container {
+        grid-size: 1;
+        padding: 1 2;
+        width: 60;
+        height: auto;
+        background: $surface;
+        border: thick $primary 80%;
+        border-radius: 1;
+    }
+
+    #question {
+        height: 3;
+        width: 100%;
+        content-align: center middle;
+        padding: 1;
+    }
+
+    #button-container {
+        height: 3;
+        align: center middle;
+        layout: horizontal;
+        padding: 0 1 1 1;
+    }
+
+    Button {
+        margin: 0 1;
+        min-width: 10;
+    }
+    """
+
     def compose(self) -> ComposeResult:
         yield Container(
             Static(
-                "Are you sure you want to create a new spreadsheet?\nAll unsaved data will be lost."),
+                "Are you sure you want to create a new spreadsheet?\nAll unsaved data will be lost.",
+                id="question"
+            ),
             Container(
                 Button("Yes", id="yes", variant="primary"),
                 Button("No", id="no", variant="error"),
-            )
+                id="button-container"
+            ),
+            id="dialog-container"
         )
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
@@ -71,8 +109,21 @@ class Grid(DataTable):
 
 class UserInterface(App):
     """App to display an Excel-like grid in Textual."""
+    TITLE = "Simple spreadsheet"
 
     CSS = """
+    Screen {
+        background: $surface;
+    }
+
+    Header {
+        background: $primary;
+        color: $text;
+        height: 1;
+        content-align: center middle;
+        text-align: center;
+    }
+
     Grid {
         height: 1fr;
         min-height: 0;
@@ -80,13 +131,38 @@ class UserInterface(App):
 
     Input {
         dock: bottom;
-        height: auto;
+        height: 3;
         margin: 0 0 1 0;
-        border: solid green;
+        border: solid $primary;
+        background: $surface;
     }
 
     Footer {
         dock: bottom;
+        background: $primary;
+        color: $text;
+        padding: 0 1;
+        height: 1;
+    }
+
+    DataTable > .datatable--header {
+        background: $primary-darken-2;
+        color: $text;
+        text-style: bold;
+    }
+
+    DataTable > .datatable--hover {
+        background: $accent-darken-2;
+    }
+
+    DataTable > .datatable--cursor {
+        background: $accent;
+        color: $text;
+    }
+
+    DataTable > .datatable--fixed {
+        background: $primary-darken-1;
+        color: $text;
     }
     """
 
@@ -102,6 +178,7 @@ class UserInterface(App):
         self.text_input = Input(placeholder="Edit cell")
 
     def compose(self) -> ComposeResult:
+        yield Header()
         yield self.grid
         yield self.text_input
         yield Footer(show_command_palette=False)
