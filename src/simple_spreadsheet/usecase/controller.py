@@ -28,6 +28,9 @@ class Controller:
 
         self._ui.run()
 
+    def create_new_spreadsheet(self) -> None:
+        self._spreadsheet = Spreadsheet()
+
     def _create_and_assign_content(self, coords: Coordinates, value: str) -> None:
         new_content = ContentFactory.create(value)
         if new_content.type == ContentType.FORMULA:

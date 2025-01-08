@@ -1,6 +1,7 @@
 from textual.app import App, ComposeResult
 from textual.widgets import DataTable, Footer, Input
 from textual.binding import Binding
+from textual.message import Message
 
 from simple_spreadsheet.domain.coordinates import Coordinates
 
@@ -12,7 +13,10 @@ class Grid(DataTable):
         super().__init__(zebra_stripes=True)
         self.selected_cell = None
 
-    def compose(self) -> ComposeResult:
+    def refresh_grid(self) -> None:
+        """Refresh the entire grid content."""
+        self.clear()
+
         cols = self.spreadsheet.get_columns()
         self.add_columns("", *cols)
         self.fixed_columns = 1
@@ -24,6 +28,8 @@ class Grid(DataTable):
             row_vals = vals[i]
             self.add_row(row_name, *row_vals, key=row_name)
 
+    def compose(self) -> ComposeResult:
+        self.refresh_grid()
         yield from super().compose()
 
     def on_data_table_cell_highlighted(self, message) -> None:
@@ -62,8 +68,17 @@ class UserInterface(App):
     """
 
     BINDINGS = [
-        Binding("q", "quit", "Quit", show=True),
+        Binding("ctrl+c", "create", "New spreadsheet", show=True),
+        Binding("ctrl+q", "quit", "Quit", show=True),
     ]
+
+    def action_create(self) -> None:
+        """Handle the create action."""
+        self.controller.create_new_spreadsheet()
+        self.grid.spreadsheet = self.controller._spreadsheet
+        self.grid.refresh_grid()
+        self.text_input.value = ""
+        self.refresh()
 
     def __init__(self, controller) -> None:
         super().__init__()
@@ -103,7 +118,6 @@ class UserInterface(App):
             # unselect the cell
             self.grid.selected_cell = None
             self.grid.focus()
-
             # TODO: deal with empty "" and how values are converted to Content
         else:
             self.text_input.value = ""
