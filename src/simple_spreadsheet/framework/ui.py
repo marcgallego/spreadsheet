@@ -1,9 +1,32 @@
 from textual.app import App, ComposeResult
-from textual.widgets import DataTable, Footer, Input
+from textual.widgets import DataTable, Footer, Input, Button, Static
 from textual.binding import Binding
-from textual.message import Message
+from textual.screen import ModalScreen
+from textual.containers import Container
+from textual import work
+
 
 from simple_spreadsheet.domain.coordinates import Coordinates
+
+
+class ConfirmDialog(ModalScreen):
+    """Simple confirmation dialog."""
+
+    def compose(self) -> ComposeResult:
+        yield Container(
+            Static(
+                "Are you sure you want to create a new spreadsheet?\nAll unsaved data will be lost."),
+            Container(
+                Button("Yes", id="yes", variant="primary"),
+                Button("No", id="no", variant="error"),
+            )
+        )
+
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        if event.button.id == "yes":
+            self.dismiss(True)
+        else:
+            self.dismiss(False)
 
 
 class Grid(DataTable):
@@ -72,14 +95,6 @@ class UserInterface(App):
         Binding("ctrl+q", "quit", "Quit", show=True),
     ]
 
-    def action_create(self) -> None:
-        """Handle the create action."""
-        self.controller.create_new_spreadsheet()
-        self.grid.spreadsheet = self.controller._spreadsheet
-        self.grid.refresh_grid()
-        self.text_input.value = ""
-        self.refresh()
-
     def __init__(self, controller) -> None:
         super().__init__()
         self.controller = controller
@@ -90,6 +105,17 @@ class UserInterface(App):
         yield self.grid
         yield self.text_input
         yield Footer(show_command_palette=False)
+
+    @work
+    async def action_create(self) -> None:
+        """Handle the create action with confirmation."""
+        dialog = ConfirmDialog()
+        if await self.push_screen_wait(dialog):
+            self.controller.create_new_spreadsheet()
+            self.grid.spreadsheet = self.controller._spreadsheet
+            self.grid.refresh_grid()
+            self.text_input.value = ""
+            self.refresh()
 
     def on_input_submitted(self, message: Input.Submitted) -> None:
         """Handle when the input field is submitted."""
