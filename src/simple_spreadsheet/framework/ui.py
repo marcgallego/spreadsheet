@@ -79,7 +79,7 @@ class Grid(DataTable):
         self.refresh_grid()
         yield from super().compose()
 
-    def on_data_table_cell_highlighted(self, message) -> None:
+    def _prepare_to_edit(self, message: object) -> None:
         ui_coords = message.coordinate
         if ui_coords.column == 0:  # Ignore row names
             return
@@ -89,11 +89,13 @@ class Grid(DataTable):
         content = cell.get_content()
         self.app.text_input.value = str(content) if content is not None else ""
 
-    def on_data_table_cell_selected(self, _) -> None:
-        if self.selected_cell is not None:
-            self.app.text_input.focus()
-        else:
-            self.app.text_input.value += "ojut"
+    def on_data_table_cell_highlighted(self, message) -> None:
+        self._prepare_to_edit(message)
+
+    def on_data_table_cell_selected(self, message) -> None:
+        if self.selected_cell is None:
+            self._prepare_to_edit(message)
+        self.app.text_input.focus()
 
 
 class UserInterface(App):
@@ -159,8 +161,7 @@ class UserInterface(App):
         Binding("ctrl+c", "create", "New spreadsheet", show=True),
         Binding("ctrl+q", "quit", "Quit", show=True),
         Binding("escape", "unfocus_input",
-                "Exit cell editing mode", show=True),
-    ]
+                "Exit cell editing mode", show=False),]
 
     def __init__(self, controller) -> None:
         super().__init__()
@@ -186,7 +187,7 @@ class UserInterface(App):
             self.refresh()
 
     def action_unfocus_input(self) -> None:
-        """Handle unfocusing the input widget when 'Esc' is pressed."""
+        """Handle unfocusing the input widget when 'esc' is pressed."""
         self.grid.selected_cell = None
         self.text_input.blur()
         self.grid.focus()
