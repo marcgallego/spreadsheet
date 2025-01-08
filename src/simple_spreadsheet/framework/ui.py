@@ -8,56 +8,42 @@ from textual import work
 from simple_spreadsheet.domain.coordinates import Coordinates
 
 
-class ConfirmDialog(ModalScreen):
-    """Simple confirmation dialog."""
-
+class ConfirmDialog(ModalScreen[bool]):
+    """A custom confirmation dialog."""
     DEFAULT_CSS = """
-    ConfirmDialog {
-        align: center middle;
-    }
-
-    #dialog-container {
-        grid-size: 1;
+    #dialog {
         padding: 1 2;
-        width: 60;
-        height: auto;
         background: $surface;
-        border: thick $primary 80%;
-        border-radius: 1;
+        border: thick $primary;
+        min-width: 40;
+        height: auto;
     }
 
     #question {
-        height: 3;
-        width: 100%;
-        content-align: center middle;
-        padding: 1;
+        padding: 1 0;
     }
 
-    #button-container {
-        height: 3;
-        align: center middle;
+    #buttons {
         layout: horizontal;
-        padding: 0 1 1 1;
+        align-horizontal: center;
+        margin-top: 1;
     }
 
     Button {
         margin: 0 1;
-        min-width: 10;
     }
     """
 
     def compose(self) -> ComposeResult:
         yield Container(
             Static(
-                "Are you sure you want to create a new spreadsheet?\nAll unsaved data will be lost.",
-                id="question"
-            ),
+                "Are you sure you want to create a new spreadsheet?\nAll unsaved data will be lost.", id="question"),
             Container(
-                Button("Yes", id="yes", variant="primary"),
-                Button("No", id="no", variant="error"),
-                id="button-container"
+                Button("Yes", variant="primary", id="yes"),
+                Button("No", variant="error", id="no"),
+                id="buttons",
             ),
-            id="dialog-container"
+            id="dialog",
         )
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
