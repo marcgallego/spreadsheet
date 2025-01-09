@@ -7,6 +7,8 @@ from simple_spreadsheet.domain.update_manager import UpdateManager
 
 from tests.automatic_grader.usecasesmarker import ISpreadsheetControllerForChecker
 
+# TODO: revisar si es llançen les excepcions de tests
+
 
 class ControllerForChecker(ISpreadsheetControllerForChecker):
     def __init__(self) -> None:
