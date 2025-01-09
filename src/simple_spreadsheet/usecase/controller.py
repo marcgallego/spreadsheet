@@ -57,6 +57,8 @@ class Controller:
         if new_content.type == ContentType.FORMULA:
             self._formula_evaluator.evaluate(new_content, self._spreadsheet)
             dependencies = new_content.get_dependencies()
+        # TODO: do it before evaluating the formula:
+        self._update_manager.has_circular_dependency(coords, dependencies)
         self._spreadsheet.set_content(coords, new_content)
         self._update_manager.set_dependencies(coords, dependencies)
         self._recompute_cells(self._update_manager.get_dependents(coords))
