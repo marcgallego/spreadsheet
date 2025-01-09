@@ -27,7 +27,6 @@ class Controller:
         self.edit_cell('B12', '=MIN(B2:B7)')
         self.edit_cell('B13', '=SUMA(B10:B12)')
 
-        # TODO: posar negreta a l'eix de les columnes
         self._ui.run()
 
     def create_new_spreadsheet(self) -> None:

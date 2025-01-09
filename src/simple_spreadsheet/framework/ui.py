@@ -153,6 +153,7 @@ class UserInterface(App):
     DataTable > .datatable--fixed {
         background: $primary-darken-1;
         color: $text;
+        text-style: bold;
     }
     """
 
