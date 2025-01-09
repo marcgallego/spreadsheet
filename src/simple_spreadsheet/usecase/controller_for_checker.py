@@ -24,6 +24,9 @@ class ControllerForChecker(ISpreadsheetControllerForChecker):
                 self._formula_evaluator.evaluate(content, self._spreadsheet)
                 self._spreadsheet.set_content(cell, content)
 
+                dependants = self._update_manager.get_dependents(cell)
+                self._recompute_cells(dependants)
+
     def _create_and_assign_content(self, coords: Coordinates, value: str) -> None:
         new_content = ContentFactory.create(value)
         dependencies = None

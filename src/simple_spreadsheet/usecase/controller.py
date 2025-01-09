@@ -23,10 +23,12 @@ class Controller:
         self.edit_cell('B2', '5')
         self.edit_cell('B3', 10)
         self.edit_cell('B4', 15)
-        self.edit_cell('B10', '=SUMA(B2:B7)')
+        self.edit_cell('B10', '=PROMEDIO(B2:B7)')
         self.edit_cell('B5', 20)
         self.edit_cell('B6', 25)
-        self.edit_cell('B7', 30)
+        self.edit_cell('B11', '=MAX(B2:B7)')
+        self.edit_cell('B12', '=MIN(B2:B7)')
+        self.edit_cell('B13', '=SUMA(B10:B12)')
 
         # TODO: posar negreta a l'eix de les columnes
         self._ui.run()
@@ -46,6 +48,8 @@ class Controller:
                     self._ui.update_cell_view(cell, content.get_raw_value())
                 except:
                     pass
+                dependants = self._update_manager.get_dependents(cell)
+                self._recompute_cells(dependants)
 
     def _create_and_assign_content(self, coords: Coordinates, value: str) -> None:
         new_content = ContentFactory.create(value)
