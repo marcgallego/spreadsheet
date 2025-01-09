@@ -3,7 +3,6 @@ from .contents import Content
 
 class Cell:
     def __init__(self) -> None:
-        # TODO: decide if the identifier is needed
         self.content = None
 
     def set_value(self, content: Content) -> None:
@@ -17,5 +16,3 @@ class Cell:
 
     def get_raw_value(self) -> None | str:
         return self.content.get_raw_value() if self.content else None
-
-    
