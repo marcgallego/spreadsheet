@@ -44,7 +44,7 @@ class ControllerForChecker(ISpreadsheetControllerForChecker):
         cell = self._spreadsheet.get_cell(coords)
         return cell.get_value()
 
-    def get_cell_content_as_str(self, coord) -> str:
+    def get_cell_content_as_string(self, coord) -> str:
         coords = Coordinates.from_id(coord)
         cell = self._spreadsheet.get_cell(coords)
         return cell.get_raw_value()
