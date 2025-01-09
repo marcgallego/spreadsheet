@@ -81,6 +81,8 @@ class Grid(DataTable):
     def _prepare_to_edit(self, message: object) -> None:
         ui_coords = message.coordinate
         if ui_coords.column == 0:  # Ignore row names
+            self.selected_cell = None
+            self.app.text_input.value = ""
             return
         self.selected_cell = Coordinates(ui_coords.row, ui_coords.column - 1)
         cell = self.controller.spreadsheet.get_cell(self.selected_cell)
@@ -92,9 +94,9 @@ class Grid(DataTable):
         self._prepare_to_edit(message)
 
     def on_data_table_cell_selected(self, message) -> None:
-        if self.selected_cell is None:
-            self._prepare_to_edit(message)
-        self.app.text_input.focus()
+        self._prepare_to_edit(message)
+        if self.selected_cell is not None:
+            self.app.text_input.focus()
 
 
 class UserInterface(App):
