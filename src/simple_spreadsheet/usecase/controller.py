@@ -18,6 +18,7 @@ class Controller:
         self._formula_evaluator = FormulaEvaluator()
         self._ui = UserInterface(self)
 
+        # TODO: remove this when testing is done
         self.edit_cell('A1', 'Prova')
         self.edit_cell('B2', '5')
         self.edit_cell('B3', 10)

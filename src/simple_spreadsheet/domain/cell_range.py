@@ -27,5 +27,3 @@ class CellRange:
     def get_coords(self) -> list[Coordinates]:
         return self._coords_in_range
 
-    def __str__(self) -> str:
-        return f'{self._top_left_corner}:{self._bottom_right_corner}'
