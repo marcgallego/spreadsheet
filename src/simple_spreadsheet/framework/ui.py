@@ -190,8 +190,7 @@ class UserInterface(App):
         self.text_input.blur()
         self.grid.focus()
 
-    def on_input_submitted(self, message: Input.Submitted) -> None:
-        """Handle when the input field is submitted."""
+    def _handle_input(self, message: Input.Submitted) -> None:
         if self.grid.selected_cell is not None:
             # Ensure we're working with string values
             new_value = message.value
@@ -221,6 +220,17 @@ class UserInterface(App):
         else:
             self.text_input.value = ""
             self.grid.focus()
+
+    def on_input_submitted(self, message: Input.Submitted) -> None:
+        """Handle when the input field is submitted."""
+        try:
+            self._handle_input(message)
+        except Exception as e:
+            self.app.notify(
+                str(e),
+                title="Ooops...",
+                severity="error",
+                timeout=None)
 
     def update_cell_view(self, coords: Coordinates, value: str) -> None:
         """Edit a cell in the spreadsheet."""
