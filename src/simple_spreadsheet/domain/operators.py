@@ -44,9 +44,6 @@ class BinaryOperator(FormulaComponent):
             return operand.evaluate(spreadsheet)
         raise TypeError(f"Unexpected operand type: {type(operand)}")
 
-    def get_type(self) -> str:
-        return self._type
-
     def __repr__(self) -> str:
         return self._symbol
 
