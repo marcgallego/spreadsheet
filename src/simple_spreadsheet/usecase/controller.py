@@ -7,6 +7,8 @@ from simple_spreadsheet.framework.ui import UserInterface
 from simple_spreadsheet.domain.formula_evaluation import FormulaEvaluator
 from simple_spreadsheet.domain.update_manager import UpdateManager
 
+# TODO: si editem un contingut del qual depen una formula a un text, per exemple, la formula no es pot reavaluar
+
 
 class Controller:
 
