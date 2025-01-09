@@ -7,9 +7,6 @@ from simple_spreadsheet.framework.ui import UserInterface
 from simple_spreadsheet.domain.formula_evaluation import FormulaEvaluator
 from simple_spreadsheet.domain.update_manager import UpdateManager
 
-# TODO: update formulas automatically when a cell is edited
-# TODO: detect circular references
-
 
 class Controller:
 

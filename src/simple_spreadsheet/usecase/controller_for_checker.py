@@ -7,9 +7,6 @@ from simple_spreadsheet.domain.update_manager import UpdateManager
 
 from tests.automatic_grader.usecasesmarker import ISpreadsheetControllerForChecker
 
-# TODO: update formulas automatically when a cell is edited
-# TODO: detect circular references
-
 
 class ControllerForChecker(ISpreadsheetControllerForChecker):
     def __init__(self) -> None:
