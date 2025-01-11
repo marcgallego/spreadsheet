@@ -117,7 +117,7 @@ class Text(Content):
 
     def get_value_as_float(self) -> float:
         if not self._value:
-            return 0.0
+            return None
         try:
             return float(self._value)
         except:

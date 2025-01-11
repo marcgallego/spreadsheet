@@ -12,7 +12,7 @@ class Cell:
         return self.content
 
     def get_value_as_float(self) -> float:
-        return self.content.get_value_as_float() if self.content else 0.0
+        return self.content.get_value_as_float() if self.content else None
 
     def get_value_as_str(self) -> str:
         return self.content.get_value_as_str() if self.content else ''
