@@ -27,7 +27,6 @@ pip install -r requirements.txt
 
 ```
 pip install -e .
-
 ```
 
 6. Run the application
