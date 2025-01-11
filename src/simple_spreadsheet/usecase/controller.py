@@ -44,7 +44,7 @@ class Controller:
                 self._spreadsheet.set_content(cell, content)
                 # TODO: try is just while testing
                 try:
-                    self._ui.update_cell_view(cell, content.get_raw_value())
+                    self._ui.update_cell_view(cell, content.get_value_as_str())
                 except:
                     pass
                 dependants = self._update_manager.get_dependents(cell)

@@ -19,11 +19,11 @@ class Content(ABC):
         pass
 
     @abstractmethod
-    def get_value(self) -> float:
+    def get_value_as_float(self) -> float:
         pass
 
-    def get_raw_value(self) -> float | str:
-        return self._value
+    def get_value_as_str(self) -> str:
+        return str(self._value)
 
     @property
     def type(self) -> ContentType:
@@ -69,7 +69,7 @@ class Formula(Content):
     def set_value(self, value: float) -> None:
         self._value = value
 
-    def get_value(self) -> float:
+    def get_value_as_float(self) -> float:
         return self._value
 
     def get_dependencies(self) -> set[Coordinates]:
@@ -97,7 +97,7 @@ class Number(Content):
     def set_value(self, value: float) -> None:
         self._value = value
 
-    def get_value(self) -> float:
+    def get_value_as_float(self) -> float:
         return self._value
 
 
@@ -115,5 +115,10 @@ class Text(Content):
     def set_value(self, value: str) -> None:
         self._value = value
 
-    def get_value(self) -> float:
-        return float(self._value)
+    def get_value_as_float(self) -> float:
+        if not self._value:
+            return 0.0
+        try:
+            return float(self._value)
+        except:
+            raise ValueError('Some text cannot be converted to float')

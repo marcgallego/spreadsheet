@@ -38,8 +38,8 @@ class BinaryOperator(FormulaComponent):
         if isinstance(operand, float):
             return operand
         if isinstance(operand, Coordinates):
-            val = spreadsheet.get_cell(operand).get_value()
-            return val if val is not None else 0.0
+            val = spreadsheet.get_cell(operand).get_value_as_float()
+            return val
         if isinstance(operand, Function):
             return operand.evaluate(spreadsheet)
         raise TypeError(f"Unexpected operand type: {type(operand)}")

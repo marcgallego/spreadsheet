@@ -47,20 +47,21 @@ class Spreadsheet:
         coords = Coordinates(row, col)
         return self.get_cell(coords)
 
+    # TODO: rename
     def get_values(self, cell_range: CellRange) -> list[Content]:
         values = []
         coords_list = cell_range.get_coords()
         for coords in coords_list:
             cell = self.get_cell(coords)
-            values.append(cell.get_value())
+            values.append(cell.get_value_as_float())
         return values
 
     # TODO: rename
     def get_all_values(self) -> list[list[Content]]:
-        return [[cell.get_raw_value() for cell in row] for row in self._cells]
+        return [[cell.get_value_as_str() for cell in row] for row in self._cells]
 
     def set_content(self, coordinates, content: Content) -> None:
         if not isinstance(content, Content):
             raise TypeError(f"Invalid content type: {type(content)}")
         cell = self.get_cell(coordinates)
-        cell.set_value(content)
+        cell.set_content(content)

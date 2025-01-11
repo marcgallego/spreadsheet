@@ -206,7 +206,7 @@ class UserInterface(App):
             )
 
             display_value = self.controller.spreadsheet.get_cell(
-                self.grid.selected_cell).get_raw_value()
+                self.grid.selected_cell).get_value_as_str()
 
             # Update the grid display
             self.grid.update_cell_at(

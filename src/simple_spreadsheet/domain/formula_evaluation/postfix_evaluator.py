@@ -30,6 +30,6 @@ class PostfixEvaluator:
         if isinstance(result, Function):
             return result.evaluate(spreadsheet)
         if isinstance(result, Coordinates):
-            return spreadsheet.get_cell(result).get_value()
+            return spreadsheet.get_cell(result).get_value_as_float()
 
         return result

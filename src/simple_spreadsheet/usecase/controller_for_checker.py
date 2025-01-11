@@ -44,12 +44,12 @@ class ControllerForChecker(ISpreadsheetControllerForChecker):
     def get_cell_content_as_float(self, coord) -> float:
         coords = Coordinates.from_id(coord)
         cell = self._spreadsheet.get_cell(coords)
-        return cell.get_value()
+        return cell.get_value_as_float()
 
     def get_cell_content_as_string(self, coord) -> str:
         coords = Coordinates.from_id(coord)
         cell = self._spreadsheet.get_cell(coords)
-        return cell.get_raw_value()
+        return cell.get_value_as_str()
 
     def get_cell_formula_expression(self, coord) -> str:
         coords = Coordinates.from_id(coord)

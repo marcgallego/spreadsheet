@@ -28,13 +28,12 @@ class Function(FormulaComponent):
         if isinstance(arg, float):
             return [arg]
         if isinstance(arg, Coordinates):
-            value = spreadsheet.get_cell(arg).get_value()
-            return [value] if value is not None else []
+            value = spreadsheet.get_cell(arg).get_value_as_float()
+            return [value]
         if isinstance(arg, CellRange):
-            return [v for v in spreadsheet.get_values(arg) if v is not None]
+            return spreadsheet.get_values(arg)
         if isinstance(arg, Function):
-            result = arg.evaluate(spreadsheet)
-            return [result] if result is not None else []
+            return arg.evaluate(spreadsheet)
         raise TypeError(f"Unsupported argument type: {type(arg)}")
 
     def _get_values(self, spreadsheet: Spreadsheet) -> list[float]:
