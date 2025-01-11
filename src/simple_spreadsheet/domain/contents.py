@@ -57,7 +57,8 @@ class Formula(Content):
     def set_expression(self, expression: str) -> None:
         self._expression = expression
 
-    def get_expression(self) -> str:
+    @property
+    def expression(self) -> str:
         return self._expression
 
     def set_postfix(self, postfix: list[FormulaComponent]) -> None:

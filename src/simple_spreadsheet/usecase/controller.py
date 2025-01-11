@@ -3,9 +3,11 @@ from functools import singledispatchmethod
 from simple_spreadsheet.domain.spreadsheet import Spreadsheet
 from simple_spreadsheet.domain.coordinates import Coordinates
 from simple_spreadsheet.domain.contents import ContentFactory, ContentType
-from simple_spreadsheet.framework.ui import UserInterface
 from simple_spreadsheet.domain.formula_evaluation import FormulaEvaluator
 from simple_spreadsheet.domain.update_manager import UpdateManager
+from simple_spreadsheet.framework.ui import UserInterface
+from simple_spreadsheet.framework.file_manager import FileManager
+
 
 # TODO: si editem un contingut del qual depen una formula a un text, per exemple, la formula no es pot reavaluar
 
@@ -13,9 +15,10 @@ from simple_spreadsheet.domain.update_manager import UpdateManager
 class Controller:
 
     def __init__(self) -> None:
-        self._update_manager = UpdateManager()
         self._spreadsheet = Spreadsheet()
+        self._update_manager = UpdateManager()
         self._formula_evaluator = FormulaEvaluator()
+        self._file_manager = FileManager()
         self._ui = UserInterface(self)
 
         # TODO: remove this when testing is done
@@ -75,6 +78,9 @@ class Controller:
     def _(self, row: int, col: int, value: str) -> None:
         coords = Coordinates(row, col)
         self._create_and_assign_content(coords, value)
+
+    def save_spreadsheet(self, file_path: str) -> None:
+        self._file_manager.save(self._spreadsheet, file_path)
 
     @property
     def spreadsheet(self) -> Spreadsheet:

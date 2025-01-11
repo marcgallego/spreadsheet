@@ -162,8 +162,9 @@ class UserInterface(App):
     BINDINGS = [
         Binding("ctrl+c", "create", "New spreadsheet", show=True),
         Binding("ctrl+q", "quit", "Quit", show=True),
+        Binding("ctrl+s", "save", "Save", show=True),
         Binding("escape", "unfocus_input",
-                "Exit cell editing mode", show=False),]
+                "Exit cell editing mode", show=False)]
 
     def __init__(self, controller) -> None:
         super().__init__()
@@ -186,6 +187,11 @@ class UserInterface(App):
             self.grid.refresh_grid()
             self.text_input.value = ""
             self.refresh()
+
+    async def action_save(self) -> None:
+        """Handle the save action."""
+        self.controller.save_spreadsheet('./spreadsheet.s2v')
+        self.notify("Spreadsheet saved", title="Success!", timeout=2)
 
     def action_unfocus_input(self) -> None:
         """Handle unfocusing the input widget when 'esc' is pressed."""

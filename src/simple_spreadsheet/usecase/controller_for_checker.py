@@ -54,4 +54,4 @@ class ControllerForChecker(ISpreadsheetControllerForChecker):
     def get_cell_formula_expression(self, coord) -> str:
         coords = Coordinates.from_id(coord)
         cell = self._spreadsheet.get_cell(coords)
-        return cell.get_content().get_expression()
+        return cell.get_content().expression

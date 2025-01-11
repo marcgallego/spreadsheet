@@ -1,7 +1,7 @@
 from functools import singledispatchmethod
 
 from .cell import Cell
-from .contents import Content
+from .contents import Content, ContentType
 from .coordinates import Coordinates, Column
 from .cell_range import CellRange
 from .consts import NUM_ROWS, NUM_COLS
@@ -65,3 +65,7 @@ class Spreadsheet:
             raise TypeError(f"Invalid content type: {type(content)}")
         cell = self.get_cell(coordinates)
         cell.set_content(content)
+
+    @property
+    def cells(self) -> list[list[Cell]]:
+        return self._cells
