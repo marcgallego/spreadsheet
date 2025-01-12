@@ -12,10 +12,10 @@ class FileManager:
         content = cell.get_content()
         if content is not None:
             if content.type == ContentType.FORMULA:
-                return content.expression.replace(";", ",")
+                return '=' + content.expression.replace(";", ",")
             else:
                 return content.get_value_as_str()
-        return ""
+        return ''
 
     def _write_file(self, file_path: str, output: list[list[str]]) -> None:
         """Writes the processed content to a file."""

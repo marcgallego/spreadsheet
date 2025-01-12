@@ -4,6 +4,7 @@ from simple_spreadsheet.domain.coordinates import Coordinates
 from simple_spreadsheet.domain.contents import ContentFactory, ContentType
 from simple_spreadsheet.domain.formula_evaluation import FormulaEvaluator
 from simple_spreadsheet.domain.update_manager import UpdateManager
+from simple_spreadsheet.framework.file_manager import FileManager
 
 from tests.automatic_grader.usecasesmarker import ISpreadsheetControllerForChecker
 
@@ -15,6 +16,7 @@ class ControllerForChecker(ISpreadsheetControllerForChecker):
         self._spreadsheet = Spreadsheet()
         self._formula_evaluator = FormulaEvaluator()
         self._update_manager = UpdateManager()
+        self._file_manager = FileManager()
 
     def _recompute_cells(self, cells: list[Coordinates]) -> None:
         for cell in cells:
@@ -54,4 +56,7 @@ class ControllerForChecker(ISpreadsheetControllerForChecker):
     def get_cell_formula_expression(self, coord) -> str:
         coords = Coordinates.from_id(coord)
         cell = self._spreadsheet.get_cell(coords)
-        return cell.get_content().expression
+        return cell.get_content()
+
+    def save_spreadsheet_to_file(self, s_name_in_user_dir) -> None:
+        self._file_manager.save(self._spreadsheet, s_name_in_user_dir)
