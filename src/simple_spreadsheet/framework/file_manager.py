@@ -8,38 +8,46 @@ class FileManager:
             return file.read()
 
     def _get_content_to_dump(self, cell) -> str:
-        if cell.get_content() is not None:
-
-            content = cell.get_content()
+        """Converts a cell's content into a string for file saving."""
+        content = cell.get_content()
+        if content is not None:
             if content.type == ContentType.FORMULA:
-                return content.expression.replace(';', ',')
+                return content.expression.replace(";", ",")
             else:
                 return content.get_value_as_str()
-        else:
-            return ""
+        return ""
 
-    def _write_file(self, file_path: str, output: list[str]) -> None:
+    def _write_file(self, file_path: str, output: list[list[str]]) -> None:
+        """Writes the processed content to a file."""
         with open(file_path, "w") as file:
             for row in output:
                 file.write(";".join(row) + "\n")
 
     def save(self, spreadsheet: Spreadsheet, file_path: str) -> None:
+        """Saves a Spreadsheet object to a file."""
         cells = spreadsheet.cells
         output = []
-        position_of_last_row = 0
-        for row in cells:
+        last_non_empty_row = -1
+
+        for row_index, row in enumerate(cells):
             row_output = []
-            position_of_last_col = -1
-            for i, cell in enumerate(row):
+            last_non_empty_col = -1
+
+            for col_index, cell in enumerate(row):
                 cell_output = self._get_content_to_dump(cell)
                 row_output.append(cell_output)
                 if cell_output != "":
-                    position_of_last_col = i
+                    last_non_empty_col = col_index
 
-            row_output = row_output[:position_of_last_col + 1]
-            if position_of_last_col > 0:
-                position_of_last_row += 1
+            # Trim to the last non-empty column
+            if last_non_empty_col >= 0:
+                row_output = row_output[:last_non_empty_col + 1]
+                last_non_empty_row = row_index
+            else:
+                row_output = []  # Skip empty rows
+
             output.append(row_output)
 
-        output = output[:position_of_last_row + 1]
+        # Trim to the last non-empty row
+        output = output[:last_non_empty_row + 1]
         self._write_file(file_path, output)
