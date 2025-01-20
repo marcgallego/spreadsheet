@@ -31,10 +31,10 @@ class ControllerForChecker(ISpreadsheetControllerForChecker):
     def _create_and_assign_content(self, coords: Coordinates, value: str) -> None:
         new_content = ContentFactory.create(value)
         dependencies = None
-        if new_content.type == ContentType.FORMULA:
+        if new_content.type == ContentType.FORMULA:  # aquest if està bé
             self._formula_evaluator.evaluate(new_content, self._spreadsheet)
             dependencies = new_content.get_dependencies()
-        self._update_manager.has_circular_dependency(coords, dependencies)
+            self._update_manager.has_circular_dependency(coords, dependencies)
         self._spreadsheet.set_content(coords, new_content)
         self._update_manager.set_dependencies(coords, dependencies)
         self._recompute_cells(self._update_manager.get_dependents(coords))
