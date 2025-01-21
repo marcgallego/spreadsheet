@@ -56,7 +56,21 @@ class ControllerForChecker(ISpreadsheetControllerForChecker):
     def get_cell_formula_expression(self, coord) -> str:
         coords = Coordinates.from_id(coord)
         cell = self._spreadsheet.get_cell(coords)
-        return cell.get_content()
+        return cell.get_content().expression
 
     def save_spreadsheet_to_file(self, s_name_in_user_dir) -> None:
         self._file_manager.save(self._spreadsheet, s_name_in_user_dir)
+
+    def load_spreadsheet_from_file(self, s_name_in_user_dir) -> None:
+        spreadsheet, coords_with_formulas = self._file_manager.read(
+            s_name_in_user_dir)
+        self._update_manager = UpdateManager()
+        self._formula_evaluator = FormulaEvaluator()
+        self._spreadsheet = spreadsheet
+        for coords in coords_with_formulas:
+            content = self._spreadsheet.get_cell(coords).get_content()
+            self._formula_evaluator.evaluate(content, self._spreadsheet)
+            self._spreadsheet.set_content(coords, content)
+            self._update_manager.set_dependencies(
+                coords, content.get_dependencies())
+            self._recompute_cells(self._update_manager.get_dependents(coords))

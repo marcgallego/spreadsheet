@@ -51,15 +51,15 @@ class Formula(Content):
         self._postfix = None
         self._value = None
 
-    def __str__(self) -> str:
-        return '=' + self._expression
-
     def set_expression(self, expression: str) -> None:
         self._expression = expression
 
     @property
     def expression(self) -> str:
-        return self._expression
+        return '=' + self._expression
+
+    def __str__(self) -> str:
+        return self.expression
 
     def set_postfix(self, postfix: list[FormulaComponent]) -> None:
         self._postfix = postfix

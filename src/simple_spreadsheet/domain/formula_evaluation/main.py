@@ -18,7 +18,8 @@ class FormulaEvaluator:
     def evaluate(self, formula: Formula, spreadsheet: Spreadsheet) -> None:
         postfix = formula.get_postfix()
         if postfix is None:
-            tokens = self._tokenizer.tokenize(formula.expression)
+            expression = formula.expression[1:] # remove '='
+            tokens = self._tokenizer.tokenize(expression)
             self._validator.has_syntax_error(tokens)
             components = self._parser.tokens_to_components(tokens)
             postfix = self._parser.infix_to_postfix(components)

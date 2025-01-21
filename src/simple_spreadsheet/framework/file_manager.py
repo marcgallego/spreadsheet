@@ -1,19 +1,32 @@
 from simple_spreadsheet.domain.spreadsheet import Spreadsheet
-from simple_spreadsheet.domain.contents import ContentType
+from simple_spreadsheet.domain.contents import ContentFactory, ContentType
+from simple_spreadsheet.domain.coordinates import Coordinates
 
 
 class FileManager:
-    def read_file(self, file_path: str) -> Spreadsheet:
-        with open(self.file_path, "r") as file:
-            return file.read()
+    def read(self, file_path: str) -> Spreadsheet:
+        """Reads the content of a file and returns a Spreadsheet object."""
+        spreadsheet = Spreadsheet()
+        coords_with_formulas: list[Coordinates] = []
+        with open(file_path, "r") as file:
             for row_index, line in enumerate(file):
+                row = line.strip().split(";")
+                for col_index, cell_data in enumerate(row):
+                    if cell_data != "":
+                        coords = Coordinates(row_index, col_index)
+                        if cell_data[0] == '=':
+                            cell_data = cell_data.replace(",", ";")
+                            coords_with_formulas.append(coords)
+                        content = ContentFactory.create(cell_data)
+                        spreadsheet.set_content(coords, content)
+        return spreadsheet, coords_with_formulas
 
     def _get_content_to_dump(self, cell) -> str:
         """Converts a cell's content into a string for file saving."""
         content = cell.get_content()
         if content is not None:
             if content.type == ContentType.FORMULA:
-                return '=' + content.expression.replace(";", ",")
+                return content.expression.replace(";", ",")
             else:
                 return content.get_value_as_str()
         return ''
