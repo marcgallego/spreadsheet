@@ -67,10 +67,4 @@ class ControllerForChecker(ISpreadsheetControllerForChecker):
         self._update_manager = UpdateManager()
         self._formula_evaluator = FormulaEvaluator()
         self._spreadsheet = spreadsheet
-        for coords in coords_with_formulas:
-            content = self._spreadsheet.get_cell(coords).get_content()
-            self._formula_evaluator.evaluate(content, self._spreadsheet)
-            self._spreadsheet.set_content(coords, content)
-            self._update_manager.set_dependencies(
-                coords, content.get_dependencies())
-            self._recompute_cells(self._update_manager.get_dependents(coords))
+        self._recompute_cells(coords_with_formulas)
