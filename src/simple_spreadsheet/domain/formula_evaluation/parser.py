@@ -17,6 +17,7 @@ class Parser:
         self._operators = OPERATORS
         self._unary_operators = UNARY_OPERATORS
         self._functions = FUNCTIONS
+        self._range_separator = RANGE_SEPARATOR
         self._precedence = {
             "*": 2, "/": 2,
             "+": 1, "-": 1,
@@ -51,7 +52,7 @@ class Parser:
                 args.append(token)
                 i += 1
             else:  # Token is a cell reference (Coordinates)
-                if tokens[i + 1] == RANGE_SEPARATOR:
+                if tokens[i + 1] == self._range_separator:
                     range_end = tokens[i + 2]
                     args.append(CellRange(token, range_end))
                     i += 3
