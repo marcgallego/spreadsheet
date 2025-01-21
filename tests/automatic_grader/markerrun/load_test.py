@@ -45,7 +45,7 @@ class LoadTest(SuperClassForTests):
         print("\nTesting load spreadsheet. Value: " + str(valor_total))
         try:
             print("\nThe spreadsheet shall be read from the reference file marker_save_test_ref.s2v")
-            self.instance.load_spreadsheet_from_file("marker_save_test_ref.s2v")
+            self.instance.load_spreadsheet_from_file("./markerrun/marker_save_test_ref.s2v")
             self.check_loaded_spreadsheet_contents(valor_total)
         except  Exception as err:
             print("*** An exception has been caught that likely has been thrown by your code. " \
