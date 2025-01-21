@@ -39,7 +39,7 @@ python src/simple_spreadsheet/main.py
 
 ```
 cd tests/automatic_grader
-PYTHONPATH=$PYTHONPATH:.:../../../spreadsheet python markerrun/TestsRunner.py
+PYTHONPATH=$PYTHONPATH:../../../spreadsheet python markerrun/TestsRunner.py
 ```
 
 ### Useful commands
