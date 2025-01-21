@@ -69,7 +69,7 @@ class UserInterface(App):
     """
 
     BINDINGS = [
-        Binding("ctrl+c", "create", "New spreadsheet", show=True),
+        Binding("ctrl+n", "create", "New spreadsheet", show=True),
         Binding("ctrl+s", "save", "Save as...", show=True),
         Binding("ctrl+o", "open", "Open...", show=True),
         Binding("ctrl+q", "quit", "Quit", show=True),
