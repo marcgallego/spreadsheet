@@ -6,6 +6,7 @@ class FileManager:
     def read_file(self, file_path: str) -> Spreadsheet:
         with open(self.file_path, "r") as file:
             return file.read()
+            for row_index, line in enumerate(file):
 
     def _get_content_to_dump(self, cell) -> str:
         """Converts a cell's content into a string for file saving."""
