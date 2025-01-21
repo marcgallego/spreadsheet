@@ -4,8 +4,8 @@ from textual.binding import Binding
 from textual import work
 
 from simple_spreadsheet.domain.coordinates import Coordinates
-from simple_spreadsheet.framework.ui.grid import Grid
-from simple_spreadsheet.framework.ui.dialogs import ConfirmDialog
+from .grid import Grid
+from .dialogs import ConfirmDialog, SaveDialog
 
 
 class UserInterface(App):
@@ -30,7 +30,7 @@ class UserInterface(App):
         min-height: 0;
     }
 
-    Input {
+    #cell-editor {
         dock: bottom;
         height: 3;
         margin: 0 0 1 0;
@@ -70,8 +70,8 @@ class UserInterface(App):
 
     BINDINGS = [
         Binding("ctrl+c", "create", "New spreadsheet", show=True),
+        Binding("ctrl+s", "save", "Save as...", show=True),
         Binding("ctrl+q", "quit", "Quit", show=True),
-        Binding("ctrl+s", "save", "Save", show=True),
         Binding("escape", "unfocus_input",
                 "Exit cell editing mode", show=False)]
 
@@ -79,7 +79,7 @@ class UserInterface(App):
         super().__init__()
         self.controller = controller
         self.grid = Grid(controller)
-        self.text_input = Input(placeholder="Edit cell")
+        self.text_input = Input(placeholder="Edit cell", id="cell-editor")
 
     def compose(self) -> ComposeResult:
         yield Header()
@@ -97,10 +97,16 @@ class UserInterface(App):
             self.text_input.value = ""
             self.refresh()
 
+    @work
     async def action_save(self) -> None:
         """Handle the save action."""
-        self.controller.save_spreadsheet('./spreadsheet.s2v')
-        self.notify("Spreadsheet saved", title="Success!", timeout=2)
+        save_dialog = SaveDialog()
+        result = await self.push_screen_wait(save_dialog)
+        if result is not None:
+            self.controller.save_spreadsheet(result)
+            file_name = result.split("/")[-1]
+            self.notify(f"Spreadsheet saved as {file_name}",
+                        title="Success!")
 
     def action_unfocus_input(self) -> None:
         """Handle unfocusing the input widget when 'esc' is pressed."""

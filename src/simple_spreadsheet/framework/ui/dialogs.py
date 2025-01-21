@@ -1,7 +1,8 @@
 from textual.app import ComposeResult
-from textual.widgets import Button, Static
+from textual.widgets import Button, Static, Input, Label
 from textual.screen import ModalScreen
 from textual.containers import Container
+import os
 
 
 class ConfirmDialog(ModalScreen[bool]):
@@ -47,3 +48,118 @@ class ConfirmDialog(ModalScreen[bool]):
             self.dismiss(True)
         else:
             self.dismiss(False)
+
+
+class EnterPathDialog(ModalScreen):
+    """Base class for file path dialog screens."""
+
+    BINDINGS = [("escape", "cancel", "Cancel")]
+
+    CSS = """
+    #dialog {
+        padding: 1 2;
+        background: $surface;
+        border: thick $primary;
+        min-width: 40;
+        min-height: 40;
+    }
+
+    #input-container {
+        layout: vertical;
+        padding: 1;
+        margin: 1;
+    }
+    
+    #status {
+        height: 1;
+        color: $error;
+    }
+    
+    #path-input {
+        margin: 1;
+    }
+    
+    Button {
+        margin: 1;
+        width: 20;
+    }
+
+    #button-container {
+        layout: horizontal;
+        align-horizontal: center;
+        margin-top: 1;
+    }
+    """
+
+    def compose(self) -> ComposeResult:
+        with Container(id="dialog"):
+            with Container(id="input-container"):
+                yield Label("Enter File Path:")
+                yield Input(placeholder="Enter path...", id="path-input")
+                yield Label("", id="status")
+                yield Label("Current directory: " + os.getcwd())
+                with Container(id="button-container"):
+                    yield Button("Save", variant="primary", id="save")
+                    yield Button("Cancel", variant="error", id="cancel")
+
+    def action_cancel(self) -> None:
+        self.dismiss(None)
+
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        if event.button.id == "cancel":
+            self.dismiss(None)
+        elif event.button.id == "save":
+            path_input = self.query_one("#path-input", Input)
+            status_label = self.query_one("#status", Label)
+            path = path_input.value.strip()
+
+            if self._validate_path(path, status_label):
+                self.dismiss(path)
+
+    def _validate_path(self, path: str, status_label: Label) -> bool:
+        """Override this method in subclasses to implement specific validation logic."""
+        raise NotImplementedError
+
+
+class SaveDialog(EnterPathDialog):
+    """Dialog for saving files with .s2v extension."""
+
+    def _validate_path(self, path: str, status_label: Label) -> bool:
+        if not path:
+            status_label.update("Please input a path")
+            return False
+
+        if not path.endswith(".s2v"):
+            status_label.styles.color = "yellow"
+            status_label.update("File must have .s2v extension")
+            return False
+
+        status_label.update("")  # Clear any error messages
+        return True
+
+
+class LoadDialog(EnterPathDialog):
+    """Dialog for loading existing .s2v files."""
+
+    def _validate_path(self, path: str, status_label: Label) -> bool:
+        if not path:
+            status_label.update("Please input a path")
+            return False
+
+        if not os.path.exists(path):
+            status_label.styles.color = "red"
+            status_label.update("The path you indicated does not exist.")
+            return False
+
+        if os.path.isdir(path):
+            status_label.styles.color = "yellow"
+            status_label.update(
+                "The path you indicated is a directory, not a file.")
+            return False
+
+        if not path.endswith(".s2v"):
+            status_label.styles.color = "yellow"
+            status_label.update("The file you indicated is not a .s2v file")
+            return False
+
+        return True
