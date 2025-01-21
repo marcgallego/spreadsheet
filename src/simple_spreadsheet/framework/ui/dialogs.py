@@ -1,8 +1,10 @@
+from abc import abstractmethod
+import os
+
 from textual.app import ComposeResult
 from textual.widgets import Button, Static, Input, Label
 from textual.screen import ModalScreen
 from textual.containers import Container
-import os
 
 
 class ConfirmDialog(ModalScreen[bool]):
@@ -50,8 +52,8 @@ class ConfirmDialog(ModalScreen[bool]):
             self.dismiss(False)
 
 
-class EnterPathDialog(ModalScreen):
-    """Base class for file path dialog screens."""
+class EnterPathDialog(ModalScreen[str]):
+    """Abstract base class for file path dialog screens."""
 
     BINDINGS = [("escape", "cancel", "Cancel")]
 
@@ -91,15 +93,22 @@ class EnterPathDialog(ModalScreen):
     }
     """
 
+    def __init__(self) -> None:
+        super().__init__()
+        self._title_text = "Enter File Path:"
+        self._action_button_text = "Confirm"
+        self._placeholder_text = "Enter path..."
+        self._status_text = ""
+
     def compose(self) -> ComposeResult:
         with Container(id="dialog"):
             with Container(id="input-container"):
-                yield Label("Enter File Path:")
-                yield Input(placeholder="Enter path...", id="path-input")
-                yield Label("", id="status")
+                yield Label(self._title_text)
+                yield Input(placeholder=self._placeholder_text, id="path-input")
+                yield Label(self._status_text, id="status")
                 yield Label("Current directory: " + os.getcwd())
                 with Container(id="button-container"):
-                    yield Button("Save", variant="primary", id="save")
+                    yield Button(self._action_button_text, variant="primary", id="save")
                     yield Button("Cancel", variant="error", id="cancel")
 
     def action_cancel(self) -> None:
@@ -116,22 +125,48 @@ class EnterPathDialog(ModalScreen):
             if self._validate_path(path, status_label):
                 self.dismiss(path)
 
+    @abstractmethod
     def _validate_path(self, path: str, status_label: Label) -> bool:
-        """Override this method in subclasses to implement specific validation logic."""
-        raise NotImplementedError
+        """Validate the entered path according to dialog-specific rules."""
+        pass
 
 
 class SaveDialog(EnterPathDialog):
     """Dialog for saving files with .s2v extension."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        self._title_text = "Enter path to save spreadsheet:"
+        self._action_button_text = "Save"
+        self._placeholder_text = "path/to/spreadsheet.s2v"
 
     def _validate_path(self, path: str, status_label: Label) -> bool:
         if not path:
             status_label.update("Please input a path")
             return False
 
+        # Check for valid filename
+        filename = os.path.basename(path)
+        name_without_ext = os.path.splitext(filename)[0]
+
+        if not filename or filename == '.s2v':
+            status_label.styles.color = "yellow"
+            status_label.update("Please enter a valid filename")
+            return False
+
+        if not name_without_ext:
+            status_label.styles.color = "yellow"
+            status_label.update("Filename cannot be empty")
+            return False
+
         if not path.endswith(".s2v"):
             status_label.styles.color = "yellow"
             status_label.update("File must have .s2v extension")
+            return False
+
+        if os.path.isdir(path):
+            status_label.styles.color = "yellow"
+            status_label.update("Path cannot be a directory")
             return False
 
         status_label.update("")  # Clear any error messages
@@ -140,6 +175,13 @@ class SaveDialog(EnterPathDialog):
 
 class LoadDialog(EnterPathDialog):
     """Dialog for loading existing .s2v files."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        self._title_text = "Select spreadsheet to load:"
+        self._action_button_text = "Load"
+        self._placeholder_text = "path/to/existing_spreadsheet.s2v"
+        self._status_text = "Note: Loading a new spreadsheet will overwrite the current one."
 
     def _validate_path(self, path: str, status_label: Label) -> bool:
         if not path:

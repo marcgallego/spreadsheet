@@ -82,6 +82,13 @@ class Controller:
     def save_spreadsheet(self, file_path: str) -> None:
         self._file_manager.save(self._spreadsheet, file_path)
 
+    def load_spreadsheet(self, file_path: str) -> None:
+        spreadsheet, coords_with_formulas = self._file_manager.read(file_path)
+        self._update_manager = UpdateManager()
+        self._formula_evaluator = FormulaEvaluator()
+        self._spreadsheet = spreadsheet
+        self._recompute_cells(coords_with_formulas)
+
     @property
     def spreadsheet(self) -> Spreadsheet:
         return self._spreadsheet

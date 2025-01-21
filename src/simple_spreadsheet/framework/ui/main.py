@@ -5,7 +5,7 @@ from textual import work
 
 from simple_spreadsheet.domain.coordinates import Coordinates
 from .grid import Grid
-from .dialogs import ConfirmDialog, SaveDialog
+from .dialogs import ConfirmDialog, SaveDialog, LoadDialog
 
 
 class UserInterface(App):
@@ -71,6 +71,7 @@ class UserInterface(App):
     BINDINGS = [
         Binding("ctrl+c", "create", "New spreadsheet", show=True),
         Binding("ctrl+s", "save", "Save as...", show=True),
+        Binding("ctrl+o", "open", "Open...", show=True),
         Binding("ctrl+q", "quit", "Quit", show=True),
         Binding("escape", "unfocus_input",
                 "Exit cell editing mode", show=False)]
@@ -107,6 +108,17 @@ class UserInterface(App):
             file_name = result.split("/")[-1]
             self.notify(f"Spreadsheet saved as {file_name}",
                         title="Success!")
+
+    @work
+    async def action_open(self) -> None:
+        """Handle the open action."""
+        load_dialog = LoadDialog()
+        file_path = await self.push_screen_wait(load_dialog)
+        if file_path:
+            self.controller.load_spreadsheet(file_path)
+            self.grid.refresh_grid()
+            self.text_input.value = ""
+            self.refresh()
 
     def action_unfocus_input(self) -> None:
         """Handle unfocusing the input widget when 'esc' is pressed."""
