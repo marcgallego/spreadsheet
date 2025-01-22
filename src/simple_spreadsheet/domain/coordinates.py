@@ -1,6 +1,6 @@
 import re
 
-from .operand import Operand
+from .formula_component import Operand
 from .functions import Argument
 from .consts import NUM_ROWS, NUM_COLS
 

@@ -1,14 +1,12 @@
 from abc import abstractmethod
 
-from .formula_component import FormulaComponent, ComponentType
-from .operand import Operand
+from .formula_component import FormulaComponent, Operand
 from .contents import Number
 from .spreadsheet import Spreadsheet
 
 
 class BinaryOperator(FormulaComponent):
     _symbol: str
-    _type = ComponentType.OPERATOR
 
     @abstractmethod
     def _compute(self, left_value: float, right_value: float) -> float:

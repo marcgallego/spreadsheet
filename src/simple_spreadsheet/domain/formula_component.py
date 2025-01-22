@@ -1,22 +1,8 @@
 from abc import ABC, abstractmethod
-from enum import Enum, auto
-
-
-class ComponentType(Enum):
-    """Types of components in a formula."""
-    OPERATOR = auto()
-    OPERAND = auto()
-    OPENING_PARENTHESIS = auto()
-    CLOSING_PARENTHESIS = auto()
 
 
 class FormulaComponent(ABC):
     """Base class for formula components."""
-    _type: ComponentType
-
-    @property
-    def type(self) -> ComponentType:
-        return self._type
 
     @abstractmethod
     def accept(self, visitor: 'Visitor') -> None:
@@ -26,35 +12,38 @@ class FormulaComponent(ABC):
         return set()
 
 
-class OpeningParenthesis(FormulaComponent):
-    _type = ComponentType.OPENING_PARENTHESIS
+class Operand(FormulaComponent):
+    """Base class for formula operands."""
+
+    @abstractmethod
+    def evaluate(self) -> float:
+        pass
+
+    def accept(self, visitor: 'Visitor') -> None:
+        visitor.visit_operand(self)
+
+class Parenthesis(FormulaComponent):
+    """Base class for parenthesis."""
+    _symbol: str
+
+    def __repr__(self) -> str:
+        return self._symbol
+    
+    @property
+    def symbol(self) -> str:
+        return self._symbol
+
+
+class OpeningParenthesis(Parenthesis):
+    def __init__(self) -> None:
+        self._symbol = '('
 
     def accept(self, visitor: 'Visitor') -> None:
         visitor.visit_opening_parenthesis(self)
 
-    def __init__(self) -> None:
-        self._symbol = '('
-
-    def __repr__(self) -> str:
-        return self._symbol
-
-    @property
-    def symbol(self) -> str:
-        return self._symbol
-
-
-class ClosingParenthesis(FormulaComponent):
-    _type = ComponentType.CLOSING_PARENTHESIS
-
-    def accept(self, visitor: 'Visitor') -> None:
-        visitor.visit_closing_parenthesis(self)
-
+class ClosingParenthesis(Parenthesis):
     def __init__(self) -> None:
         self._symbol = ')'
 
-    def __repr__(self) -> str:
-        return self._symbol
-
-    @property
-    def symbol(self) -> str:
-        return self._symbol
+    def accept(self, visitor: 'Visitor') -> None:
+        visitor.visit_closing_parenthesis(self)

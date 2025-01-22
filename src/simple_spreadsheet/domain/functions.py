@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from .operand import Operand
+from .formula_component import Operand
 
 
 class Argument(ABC):
