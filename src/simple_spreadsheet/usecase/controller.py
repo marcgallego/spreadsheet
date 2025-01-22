@@ -54,10 +54,10 @@ class Controller:
         new_content = ContentFactory.create(value)
         dependencies = None
         if new_content.is_formula():
-            self._formula_evaluator.evaluate(new_content, self._spreadsheet)
+            self._formula_evaluator.get_postfix(new_content)
             dependencies = new_content.get_dependencies()
-        # TODO: do it before evaluating the formula:
-        self._update_manager.has_circular_dependency(coords, dependencies)
+            self._update_manager.has_circular_dependency(coords, dependencies)
+            self._formula_evaluator.evaluate(new_content, self._spreadsheet)
         self._spreadsheet.set_content(coords, new_content)
         self._update_manager.set_dependencies(coords, dependencies)
         self._recompute_cells(self._update_manager.get_dependents(coords))

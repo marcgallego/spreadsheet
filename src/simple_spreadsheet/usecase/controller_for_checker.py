@@ -9,11 +9,12 @@ from ..framework.file_manager import FileManager
 from tests.automatic_grader.usecasesmarker import ISpreadsheetControllerForChecker
 from tests.automatic_grader.entities.no_number_exception import NoNumberException
 
+
 class ControllerForChecker(ISpreadsheetControllerForChecker):
     def __init__(self) -> None:
         self._spreadsheet = Spreadsheet()
         self._formula_evaluator = FormulaEvaluator()
-        self._update_manager = UpdateManager()
+        self._update_manager = UpdateManager()  # TODO: rename
         self._file_manager = FileManager()
 
     def _recompute_cells(self, cells: list[Coordinates]) -> None:
@@ -30,9 +31,10 @@ class ControllerForChecker(ISpreadsheetControllerForChecker):
         new_content = ContentFactory.create(value)
         dependencies = None
         if new_content.is_formula():
-            self._formula_evaluator.evaluate(new_content, self._spreadsheet)
+            self._formula_evaluator.get_postfix(new_content)
             dependencies = new_content.get_dependencies()
             self._update_manager.has_circular_dependency(coords, dependencies)
+            self._formula_evaluator.evaluate(new_content, self._spreadsheet)
         self._spreadsheet.set_content(coords, new_content)
         self._update_manager.set_dependencies(coords, dependencies)
         self._recompute_cells(self._update_manager.get_dependents(coords))
@@ -65,7 +67,7 @@ class ControllerForChecker(ISpreadsheetControllerForChecker):
     def load_spreadsheet_from_file(self, s_name_in_user_dir) -> None:
         spreadsheet, coords_with_formulas = self._file_manager.read(
             s_name_in_user_dir)
-        self._update_manager = UpdateManager()
         self._formula_evaluator = FormulaEvaluator()
+        self._update_manager = UpdateManager()
         self._spreadsheet = spreadsheet
         self._recompute_cells(coords_with_formulas)
