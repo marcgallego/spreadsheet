@@ -11,6 +11,14 @@ if TYPE_CHECKING:
 ABC_LEN = 26
 
 
+class BadCoordinateException(Exception):
+    def __init__(self) -> None:
+        Exception.__init__(self)
+
+    def __init__(self, msg) -> None:
+        Exception.__init__(self, msg)
+
+
 class Column:
     @staticmethod
     def number_from_letters(letters: str) -> int:
@@ -44,8 +52,8 @@ class Coordinates(Operand, Argument):
     @classmethod
     def from_id(cls, cell_id: str) -> 'Coordinates':
         if not isinstance(cell_id, str):
-            raise TypeError(f"Expected cell_id to be a string, got {
-                            type(cell_id).__name__}")
+            raise BadCoordinateException(f"Expected cell_id to be a string, got {
+                type(cell_id).__name__}")
         cell_id = cell_id.upper()
         cls.is_valid_id(cell_id)
         row, col = cls.parse_id(cell_id)
@@ -54,7 +62,7 @@ class Coordinates(Operand, Argument):
     @staticmethod
     def is_valid_id(cell_id: str) -> None:
         if not re.match(r'^[A-Z]+[0-9]+$', cell_id):
-            raise ValueError(f'Invalid cell ID ({cell_id})')
+            raise BadCoordinateException(f'Invalid cell ID ({cell_id})')
 
     @staticmethod
     def parse_id(cell_id: str) -> tuple[int, int]:
@@ -74,7 +82,7 @@ class Coordinates(Operand, Argument):
 
     def _is_in_range(self) -> None:
         if not (0 <= self._row < NUM_ROWS and 0 <= self._col < NUM_COLS):
-            raise ValueError('Cell out of range')
+            raise BadCoordinateException('Cell out of range')
 
     def _parse_indices(self, row: int, col: int) -> str:
         return Column.letters_from_number(col) + str(row + 1)
