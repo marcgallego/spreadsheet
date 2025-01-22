@@ -6,6 +6,8 @@ from textual.widgets import Button, Static, Input, Label
 from textual.screen import ModalScreen
 from textual.containers import Container
 
+# TODO: break this into two files
+
 
 class ConfirmDialog(ModalScreen[bool]):
     """A custom confirmation dialog."""
