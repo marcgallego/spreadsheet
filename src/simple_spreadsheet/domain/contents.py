@@ -115,7 +115,7 @@ class Text(Content):
             return float(self._value)
         except:
             raise ValueError(
-                f'("{self._value}") is of type text and cannot be converted to float')
+                f'"{self._value}" can not be converted to float')
 
     def get_value_as_str(self) -> str:
         return self._value
