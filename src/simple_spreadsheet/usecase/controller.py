@@ -17,19 +17,6 @@ class Controller:
         self._deps_manager = DependencyManager()
         self._file_manager = FileManager()
         self._ui = UserInterface(self)
-
-        # TODO: remove this when testing is done
-        self.edit_cell('A1', 'Prova')
-        self.edit_cell('B2', '5')
-        self.edit_cell('B3', 10)
-        self.edit_cell('B4', 15)
-        self.edit_cell('B10', '=PROMEDIO(B2:B7)')
-        self.edit_cell('B5', 20)
-        self.edit_cell('B6', 25)
-        self.edit_cell('B11', '=MAX(B2:B7)')
-        self.edit_cell('B12', '=MIN(B2:B7)')
-        self.edit_cell('B13', '=SUMA(B10:B12)')
-
         self._ui.run()
 
     def create_new_spreadsheet(self) -> None:
@@ -42,11 +29,7 @@ class Controller:
             if content.is_formula():
                 self._formula_evaluator.evaluate(content, self._spreadsheet)
                 self._spreadsheet.set_content(cell, content)
-                # TODO: try is just while testing
-                try:
-                    self._ui.update_cell_view(cell, content.get_value_as_str())
-                except:
-                    pass
+                self._ui.update_cell_view(cell, content.get_value_as_str())
                 dependants = self._deps_manager.get_dependents(cell)
                 self._recompute_cells(dependants)
 
