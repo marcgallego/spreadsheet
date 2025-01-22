@@ -13,8 +13,8 @@ class Controller:
 
     def __init__(self) -> None:
         self._spreadsheet = Spreadsheet()
-        self._deps_manager = DependencyManager()
         self._formula_evaluator = FormulaEvaluator()
+        self._deps_manager = DependencyManager()
         self._file_manager = FileManager()
         self._ui = UserInterface(self)
 
@@ -81,8 +81,8 @@ class Controller:
 
     def load_spreadsheet(self, file_path: str) -> None:
         spreadsheet, coords_with_formulas = self._file_manager.read(file_path)
-        self._deps_manager = DependencyManager()
         self._formula_evaluator = FormulaEvaluator()
+        self._deps_manager = DependencyManager()
         self._spreadsheet = spreadsheet
         self._recompute_cells(coords_with_formulas)
 
