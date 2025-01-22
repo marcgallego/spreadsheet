@@ -29,21 +29,21 @@ class Spreadsheet:
         return self._cols
 
     @singledispatchmethod
-    def get_cell(self, _) -> 'Cell':
+    def get_cell(self, _) -> Cell:
         raise NotImplementedError("Unsupported type")
 
     @get_cell.register
-    def _(self, coords: 'Coordinates') -> 'Cell':
+    def _(self, coords: Coordinates) -> Cell:
         row, col = coords.get_indices()
         return self._cells[row][col]
 
     @get_cell.register
-    def _(self, cell_id: str) -> 'Cell':
+    def _(self, cell_id: str) -> Cell:
         coords = Coordinates.from_id(cell_id)
         return self.get_cell(coords)
 
     @get_cell.register
-    def _(self, row: int, col: int) -> 'Cell':
+    def _(self, row: int, col: int) -> Cell:
         coords = Coordinates(row, col)
         return self.get_cell(coords)
 
