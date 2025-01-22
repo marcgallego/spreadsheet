@@ -1,7 +1,7 @@
 
 from ..domain.spreadsheet import Spreadsheet
 from ..domain.coordinates import Coordinates
-from ..domain.contents import ContentFactory
+from ..domain.contents import ContentFactory, Content
 from ..domain.formula_evaluation import FormulaEvaluator
 from ..domain.dependency_manager import DependencyManager
 from ..framework.file_manager import FileManager
@@ -27,7 +27,7 @@ class ControllerForChecker(ISpreadsheetControllerForChecker):
                 dependants = self._deps_manager.get_dependents(cell)
                 self._recompute_cells(dependants)
 
-    def _create_and_assign_content(self, coords: Coordinates, value: str) -> None:
+    def _create_content(self, value: str, coords: Coordinates,) -> tuple[Content, list[Coordinates]]:
         new_content = ContentFactory.create(value)
         dependencies = None
         if new_content.is_formula():
@@ -35,13 +35,17 @@ class ControllerForChecker(ISpreadsheetControllerForChecker):
             dependencies = new_content.get_dependencies()
             self._deps_manager.has_circular_dependency(coords, dependencies)
             self._formula_evaluator.evaluate(new_content, self._spreadsheet)
-        self._spreadsheet.set_content(coords, new_content)
+        return new_content, dependencies
+
+    def _assign_content(self, coords: Coordinates, content: Content, dependencies: list[Coordinates]) -> None:
+        self._spreadsheet.set_content(coords, content)
         self._deps_manager.set_dependencies(coords, dependencies)
         self._recompute_cells(self._deps_manager.get_dependents(coords))
 
     def set_cell_content(self, coord, str_content) -> None:
         coords = Coordinates.from_id(coord)
-        self._create_and_assign_content(coords, str_content)
+        content, dependencies = self._create_content(str_content, coords)
+        self._assign_content(coords, content, dependencies)
 
     def get_cell_content_as_float(self, coord) -> float:
         coords = Coordinates.from_id(coord)

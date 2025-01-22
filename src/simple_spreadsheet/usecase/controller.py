@@ -2,7 +2,7 @@ from functools import singledispatchmethod
 
 from ..domain.spreadsheet import Spreadsheet
 from ..domain.coordinates import Coordinates
-from ..domain.contents import ContentFactory
+from ..domain.contents import ContentFactory, Content
 from ..domain.formula_evaluation import FormulaEvaluator
 from ..domain.dependency_manager import DependencyManager
 from ..framework.ui import UserInterface
@@ -33,7 +33,7 @@ class Controller:
                 dependants = self._deps_manager.get_dependents(cell)
                 self._recompute_cells(dependants)
 
-    def _create_and_assign_content(self, coords: Coordinates, value: str) -> None:
+    def _create_content(self, value: str, coords: Coordinates,) -> tuple[Content, list[Coordinates]]:
         new_content = ContentFactory.create(value)
         dependencies = None
         if new_content.is_formula():
@@ -41,9 +41,16 @@ class Controller:
             dependencies = new_content.get_dependencies()
             self._deps_manager.has_circular_dependency(coords, dependencies)
             self._formula_evaluator.evaluate(new_content, self._spreadsheet)
-        self._spreadsheet.set_content(coords, new_content)
+        return new_content, dependencies
+
+    def _assign_content(self, coords: Coordinates, content: Content, dependencies: list[Coordinates]) -> None:
+        self._spreadsheet.set_content(coords, content)
         self._deps_manager.set_dependencies(coords, dependencies)
         self._recompute_cells(self._deps_manager.get_dependents(coords))
+
+    def set_cell_content(self, coords: Coordinates, str_content: str) -> None:
+        content, dependencies = self._create_content(str_content, coords)
+        self._assign_content(coords, content, dependencies)
 
     @singledispatchmethod
     def edit_cell(self, _) -> None:
@@ -52,12 +59,12 @@ class Controller:
     @edit_cell.register
     def _(self, cell_id: str, value: str) -> None:
         coords = Coordinates.from_id(cell_id)
-        self._create_and_assign_content(coords, value)
+        self.set_cell_content(coords, value)
 
     @edit_cell.register
     def _(self, row: int, col: int, value: str) -> None:
         coords = Coordinates(row, col)
-        self._create_and_assign_content(coords, value)
+        self.set_cell_content(coords, value)
 
     def save_spreadsheet(self, file_path: str) -> None:
         self._file_manager.save(self._spreadsheet, file_path)
