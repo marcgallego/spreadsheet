@@ -6,7 +6,7 @@ class PostfixEvaluator:
     def evaluate(self, postfix: list[FormulaComponent], spreadsheet: Spreadsheet) -> float:
         stack = []
         for component in postfix:
-            component_type = component.get_type()
+            component_type = component.type
 
             if component_type == ComponentType.OPERAND:
                 stack.append(component)

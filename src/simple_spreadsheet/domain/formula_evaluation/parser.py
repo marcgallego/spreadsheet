@@ -88,8 +88,7 @@ class Parser:
         precedence = self._precedence
 
         for component in components:
-            # TODO: float will be Number in the future, so this will need to be updated
-            component_type = component.get_type()
+            component_type = component.type
 
             if component_type == ComponentType.OPERAND:
                 output.append(component)

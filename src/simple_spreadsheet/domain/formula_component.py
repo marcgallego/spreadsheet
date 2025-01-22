@@ -14,8 +14,8 @@ class FormulaComponent(ABC):
     """Base class for formula components."""
     _type: ComponentType
 
-    def get_type(self) -> str:
-        """Return the type of the component."""
+    @property
+    def type(self) -> ComponentType:
         return self._type
 
 

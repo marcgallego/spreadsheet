@@ -66,7 +66,7 @@ class Formula(Content):
     def get_dependencies(self) -> set[Coordinates]:
         dependencies = set()
         for component in self._postfix:
-            if component.get_type() == ComponentType.OPERAND:
+            if component.type == ComponentType.OPERAND:
                 dependencies.update(component.get_dependencies())
 
         return dependencies
