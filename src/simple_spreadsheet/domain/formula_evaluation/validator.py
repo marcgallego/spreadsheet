@@ -28,11 +28,10 @@ class Validator:
     def __init__(self) -> None:
         self._tokens: list[Token] = []
         self._pos: int = 0
-        # Using frozen sets for immutable constant collections
-        self._operators = frozenset(OPERATORS)
-        self._unary_operators = frozenset(UNARY_OPERATORS)
-        self._separators = frozenset(SEPARATORS)
-        self._functions = frozenset(FUNCTIONS)
+        self._operators = OPERATORS
+        self._unary_operators = UNARY_OPERATORS
+        self._separators = SEPARATORS
+        self._functions = FUNCTIONS
         self._range_separator = RANGE_SEPARATOR
         self._param_separator = PARAM_SEPARATOR
 
@@ -108,17 +107,8 @@ class Validator:
                 if self._is_function(token):
                     self._parse_function()
                     last_element = FunctionTokenType.FUNCTION
-                elif self._can_be_unary_operator(token):
-                    if last_element != FunctionTokenType.SEPARATOR:
-                        raise SyntaxError(
-                            f"Unary operator must be preceded by a separator at position {self._pos}")
-                    self._consume()
-                    last_element = FunctionTokenType.UNARY_OPERATOR
-                    if not self._is_number(self._peek()):
-                        raise SyntaxError(
-                            f"Inside functions, unary operators must be followed by a number at position {self._pos}")
                 elif self._is_number(token):
-                    if last_element != FunctionTokenType.SEPARATOR and last_element != FunctionTokenType.UNARY_OPERATOR:
+                    if last_element != FunctionTokenType.SEPARATOR:
                         raise SyntaxError(
                             f"Number must be preceded by a separator at position {self._pos}")
                     self._consume()
@@ -189,14 +179,26 @@ class Validator:
                           token}' at position {self._pos}")
 
     def _parse_unary(self) -> None:
-        """Parse unary operators, supporting multiple consecutive unary operators."""
-        unary_count = 0
-
-        while (token := self._peek()) and self._can_be_unary_operator(token):
+        """Parse unary operators, only allowing them before numbers."""
+        if (token := self._peek()) and self._can_be_unary_operator(token):
+            # Look ahead to check if the next token is a number
             self._consume()
-            unary_count += 1
+            next_token = self._peek()
 
-        # After consuming all unary operators, process the primary expression.
+            if not self._is_number(next_token):
+                if self._is_cell_reference(next_token):
+                    raise SyntaxError(
+                        f"Unary operators cannot be used with cell references at position {self._pos}")
+                elif self._is_function(next_token):
+                    raise SyntaxError(
+                        f"Unary operators cannot be used with functions at position {self._pos}")
+                else:
+                    raise SyntaxError(
+                        f"Unary operators must be followed by a number at position {self._pos}")
+
+            self._consume()  # Consume the number
+            return
+
         self._parse_primary()
 
     def _parse_binary_operation(self) -> None:

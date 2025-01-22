@@ -5,7 +5,7 @@ from ..functions import Function, FunctionFactory
 from ..cell_range import CellRange
 from ..operators import BinaryOperatorFactory, BinaryOperator
 from ..coordinates import Coordinates
-from .consts import OPERATORS, UNARY_OPERATORS, FUNCTIONS, RANGE_SEPARATOR, PARAM_SEPARATOR
+from .consts import OPERATORS, FUNCTIONS, RANGE_SEPARATOR, PARAM_SEPARATOR
 
 type Component = Union[float, Coordinates, Function, BinaryOperator]
 
@@ -15,7 +15,6 @@ class Parser:
 
     def __init__(self) -> None:
         self._operators = OPERATORS
-        self._unary_operators = UNARY_OPERATORS
         self._functions = FUNCTIONS
         self._range_separator = RANGE_SEPARATOR
         self._precedence = {
@@ -41,18 +40,11 @@ class Parser:
             elif token in self._functions:
                 arg, i = self.parse_function(tokens, i)
                 args.append(arg)
-            elif token in self._unary_operators:
-                next_token = tokens[i + 1]
-                if token == '-':
-                    args.append(-next_token)
-                else:
-                    args.append(next_token)
-                i += 2
             elif isinstance(token, float):
                 args.append(token)
                 i += 1
             else:  # Token is a cell reference (Coordinates)
-                if tokens[i + 1] == self._range_separator:
+                if i + 1 < n and tokens[i + 1] == self._range_separator:
                     range_end = tokens[i + 2]
                     args.append(CellRange(token, range_end))
                     i += 3
@@ -65,10 +57,9 @@ class Parser:
 
     def tokens_to_components(self, tokens: List[str]) -> List[Component]:
         """Converts a list of tokens into Component objects."""
-        # TODO: unary operators not supported
         components = []
-
         i = 0
+
         while i < len(tokens):
             token = tokens[i]
             if token in self._functions:
