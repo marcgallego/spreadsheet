@@ -1,6 +1,7 @@
 import re
 
 from .formula_component import Operand
+from .functions import Argument
 from .consts import NUM_ROWS, NUM_COLS
 
 ABC_LEN = 26
@@ -27,7 +28,7 @@ class Column:
         return letters
 
 
-class Coordinates(Operand):
+class Coordinates(Operand, Argument):
 
     def __init__(self, row: int, col: int) -> None:
         self._row = row
@@ -82,8 +83,11 @@ class Coordinates(Operand):
     def get_dependencies(self) -> set['Coordinates']:
         return {self}
 
-    def evaluate(self, spreadsheet: Spreadsheet) -> float:
+    def evaluate(self, spreadsheet) -> float:
         return spreadsheet.get_cell(self).get_value_as_float()
+
+    def evaluate_arg(self, spreadsheet: 'Spreadsheet') -> list[float]:
+        return [self.evaluate(spreadsheet)]
 
     @property
     def id(self) -> str:

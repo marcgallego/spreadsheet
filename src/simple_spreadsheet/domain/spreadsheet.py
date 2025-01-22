@@ -48,15 +48,6 @@ class Spreadsheet:
         return self.get_cell(coords)
 
     # TODO: rename
-    def get_values(self, cell_range: CellRange) -> list[Content]:
-        values = []
-        coords_list = cell_range.get_coords()
-        for coords in coords_list:
-            cell = self.get_cell(coords)
-            values.append(cell.get_value_as_float())
-        return values
-
-    # TODO: rename
     def get_all_values(self) -> list[list[Content]]:
         return [[cell.get_value_as_str() for cell in row] for row in self._cells]
 

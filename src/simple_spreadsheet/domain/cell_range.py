@@ -1,7 +1,9 @@
+from .functions import Argument
 from .coordinates import Coordinates
+from .contents import Content
 
 
-class CellRange:
+class CellRange(Argument):
     def __init__(self, start: Coordinates, end: Coordinates) -> None:
         min_row = min(start.row, end.row)
         max_row = max(start.row, end.row)
@@ -27,3 +29,13 @@ class CellRange:
     def get_coords(self) -> list[Coordinates]:
         return self._coords_in_range
 
+    def evaluate_arg(self, spreadsheet) -> list[float]:
+        values = []
+        coords_list = self.get_coords()
+        for coords in coords_list:
+            cell = spreadsheet.get_cell(coords)
+            values.append(cell.get_value_as_float())
+        return values
+
+    def get_dependencies(self) -> set[Coordinates]:
+        return set(self._coords_in_range)

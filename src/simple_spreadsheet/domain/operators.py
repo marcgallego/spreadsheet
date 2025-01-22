@@ -1,6 +1,7 @@
 from abc import abstractmethod
 
 from .formula_component import FormulaComponent, Operand, ComponentType
+from .contents import Number
 from .spreadsheet import Spreadsheet
 
 
@@ -13,12 +14,12 @@ class BinaryOperator(FormulaComponent):
         """Perform the binary operation on evaluated operands."""
         pass
 
-    def operate(self, left: Operand, right: Operand, spreadsheet: Spreadsheet) -> float:
+    def operate(self, left: Operand, right: Operand, spreadsheet: Spreadsheet) -> Number:
         """Validate and evaluate operands, then compute the result."""
         self._validate_operands(left, right)
         left_value = self._evaluate_operand(left, spreadsheet)
         right_value = self._evaluate_operand(right, spreadsheet)
-        return self._compute(left_value, right_value)
+        return Number(self._compute(left_value, right_value))
 
     def _validate_operands(self, left: Operand, right: Operand) -> None:
         if not isinstance(left, Operand):

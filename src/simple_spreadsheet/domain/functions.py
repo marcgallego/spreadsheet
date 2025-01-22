@@ -1,16 +1,19 @@
-from typing import Union
-from abc import abstractmethod
+from abc import ABC, abstractmethod
 
-from .formula_component import Operand, ComponentType
-from .coordinates import Coordinates
-from .contents import Number
-from .cell_range import CellRange
-from .spreadsheet import Spreadsheet
-
-type Argument = Union[Number, Coordinates, CellRange, Function]
+from .formula_component import Operand
 
 
-class Function(Operand):
+class Argument(ABC):
+    @abstractmethod
+    def evaluate_arg(self, spreadsheet: 'Spreadsheet') -> list[float]:
+        pass
+
+    @abstractmethod
+    def get_dependencies(self) -> set:
+        pass
+
+
+class Function(Operand, Argument):
     def __init__(self, args: list[Argument]) -> None:
         self._args = args
         self._validate_args()
@@ -22,22 +25,14 @@ class Function(Operand):
         if not self._args:
             raise ValueError("Function must have at least one argument")
 
-    def _evaluate_argument(self, arg: Argument, spreadsheet: Spreadsheet) -> list[float]:
-        """Evaluates an argument and returns numeric values, excluding `None`."""
-        # TODO: use inheritance instead of type checking, e.g. `arg.evaluate()`
-        if isinstance(arg, Number):
-            return [arg.get_value_as_float()]
-        if isinstance(arg, Coordinates):
-            value = spreadsheet.get_cell(arg).get_value_as_float()
-            return [value] if value is not None else []
-        if isinstance(arg, CellRange):
-            return [v for v in spreadsheet.get_values(arg) if v is not None]
-        if isinstance(arg, Function):
-            result = arg.evaluate(spreadsheet)
-            return [result] if result is not None else []
-        raise TypeError(f"Unsupported argument type: {type(arg)}")
+    def _filter_nones(self, values: list[float]) -> list[float]:
+        return [v for v in values if v is not None]
 
-    def _get_values(self, spreadsheet: Spreadsheet) -> list[float]:
+    def _evaluate_argument(self, arg: Argument, spreadsheet: 'Spreadsheet') -> list[float]:
+        """Evaluates an argument and returns numeric values, excluding `None`."""
+        return self._filter_nones(arg.evaluate_arg(spreadsheet))
+
+    def _get_values(self, spreadsheet: 'Spreadsheet') -> list[float]:
         """Evaluates all arguments and combines valid values."""
         values = []
         for arg in self._args:
@@ -45,18 +40,16 @@ class Function(Operand):
         return values
 
     @abstractmethod
-    def evaluate(self, spreadsheet: Spreadsheet) -> float:
+    def evaluate(self, spreadsheet: 'Spreadsheet') -> float:
         pass
 
-    def get_dependencies(self) -> set[Coordinates]:
+    def evaluate_arg(self, spreadsheet: 'Spreadsheet') -> list[float]:
+        return [self.evaluate(spreadsheet)]
+
+    def get_dependencies(self) -> set:
         dependencies = set()
         for arg in self._args:
-            if isinstance(arg, Coordinates):
-                dependencies.add(arg)
-            if isinstance(arg, CellRange):
-                dependencies.update(arg.get_coords())
-            if isinstance(arg, Function):
-                dependencies.update(arg.get_dependencies())
+            dependencies.update(arg.get_dependencies())
         return dependencies
 
 
@@ -75,23 +68,23 @@ class FunctionFactory:
 
 
 class Sum(Function):
-    def evaluate(self, spreadsheet: Spreadsheet) -> float:
+    def evaluate(self, spreadsheet: 'Spreadsheet') -> float:
         return sum(self._get_values(spreadsheet))
 
 
 class Min(Function):
-    def evaluate(self, spreadsheet: Spreadsheet) -> float:
+    def evaluate(self, spreadsheet: 'Spreadsheet') -> float:
         values = self._get_values(spreadsheet)
         return min(values, default=0.0)
 
 
 class Max(Function):
-    def evaluate(self, spreadsheet: Spreadsheet) -> float:
+    def evaluate(self, spreadsheet: 'Spreadsheet') -> float:
         values = self._get_values(spreadsheet)
         return max(values, default=0.0)
 
 
 class Average(Function):
-    def evaluate(self, spreadsheet: Spreadsheet) -> float:
+    def evaluate(self, spreadsheet: 'Spreadsheet') -> float:
         values = self._get_values(spreadsheet)
         return sum(values) / len(values) if values else 0.0

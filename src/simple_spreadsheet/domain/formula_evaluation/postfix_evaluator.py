@@ -22,9 +22,5 @@ class PostfixEvaluator:
             raise ValueError(
                 "Invalid postfix expression: stack does not contain exactly one element.")
 
-        result = stack.pop()
-
-        if isinstance(result, Operand):
-            return result.evaluate(spreadsheet)
-
+        result = stack.pop().evaluate(spreadsheet)
         return result

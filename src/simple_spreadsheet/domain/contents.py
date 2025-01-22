@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
 from .formula_component import FormulaComponent, Operand, ComponentType
+from .functions import Argument
 from .coordinates import Coordinates
 
 
@@ -76,7 +77,7 @@ class Formula(Content):
         return True
 
 
-class Number(Content, Operand):
+class Number(Content, Operand, Argument):
 
     def __init__(self, value: float | int | str) -> None:
         self._value = float(value)
@@ -92,6 +93,9 @@ class Number(Content, Operand):
 
     def evaluate(self, _) -> float:
         return self._value
+
+    def evaluate_arg(self, _) -> list[float]:
+        return [self._value]
 
     def get_dependencies(self) -> set[Coordinates]:
         return set()
