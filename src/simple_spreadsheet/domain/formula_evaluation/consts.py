@@ -3,16 +3,16 @@ from simple_spreadsheet.domain.coordinates import Coordinates
 
 type Token = Union[str, float, Coordinates]
 
-FUNCTIONS = {'SUMA', 'PROMEDIO', 'MAX', 'MIN'}
+FUNCTIONS = frozenset({'SUMA', 'PROMEDIO', 'MAX', 'MIN'})
 
-OPERATORS = {'+', '-', '*', '/'}
+OPERATORS = frozenset({'+', '-', '*', '/'})
 UNARY_OPERATORS = {'+', '-'}  # Only used for numbers
 
 DECIMAL_SEPARATOR = '.'
 RANGE_SEPARATOR = ':'
 PARAM_SEPARATOR = ';'
-SEPARATORS = {RANGE_SEPARATOR, PARAM_SEPARATOR}
+SEPARATORS = frozenset({RANGE_SEPARATOR, PARAM_SEPARATOR})
 
-DELIMITERS = {'(', ')'}
+DELIMITERS = frozenset({'(', ')'})
 
 SPECIAL_CHARS = OPERATORS | SEPARATORS | DELIMITERS
