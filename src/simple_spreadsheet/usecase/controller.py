@@ -48,8 +48,8 @@ class Controller:
         self._deps_manager.set_dependencies(coords, dependencies)
         self._recompute_cells(self._deps_manager.get_dependents(coords))
 
-    def set_cell_content(self, coords: Coordinates, str_content: str) -> None:
-        content, dependencies = self._create_content(str_content, coords)
+    def set_cell_content(self, coords: Coordinates, new_value: str) -> None:
+        content, dependencies = self._create_content(new_value, coords)
         self._assign_content(coords, content, dependencies)
 
     @singledispatchmethod

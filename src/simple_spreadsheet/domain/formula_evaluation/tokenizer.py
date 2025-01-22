@@ -4,6 +4,14 @@ from ..contents import Number
 from .consts import Token, DECIMAL_SEPARATOR, SPECIAL_CHARS, FUNCTIONS, UNARY_OPERATORS, CLOSING_PARENTHESIS
 
 
+class TokenizationError(Exception):
+    def __init__(self) -> None:
+        Exception.__init__(self)
+
+    def __init__(self, msg) -> None:
+        Exception.__init__(self, msg)
+
+
 class Tokenizer:
     def __init__(self) -> None:
         self._tokens: list[Token] = []
@@ -32,14 +40,15 @@ class Tokenizer:
         while i < n and self._is_valid_numeric_char(expression[i]):
             if expression[i] == self._decimal_separator:
                 if decimal_separator_seen:
-                    raise ValueError(
+                    raise TokenizationError(
                         'A number contains multiple decimal separators')
                 decimal_separator_seen = True
             num += expression[i]
             i += 1
 
         if num in self._unary_operators:  # Handle alone signs
-            raise ValueError(f'Invalid number at position {start_index}')
+            raise TokenizationError(
+                f'Invalid number at position {start_index}')
 
         return Number(num), i
 
@@ -56,8 +65,8 @@ class Tokenizer:
             upper_var = var.upper()
             if upper_var in self._functions:
                 return upper_var, i
-            raise ValueError(f'Invalid function "{
-                             var}" at position {start_index}')
+            raise TokenizationError(f'Invalid function "{
+                var}" at position {start_index}')
         return Coordinates.from_id(var), i
 
     def _is_binary_operator_context(self, prev_token: Token | None) -> bool:
@@ -97,7 +106,7 @@ class Tokenizer:
                             self._tokens.append(char)
                             i += 1
                         else:
-                            raise ValueError(
+                            raise TokenizationError(
                                 f'Invalid number format at position {i}') from e
             elif self._is_valid_numeric_char(char):
                 num, i = self._extract_number(
@@ -110,7 +119,8 @@ class Tokenizer:
                 self._tokens.append(char)
                 i += 1
             else:
-                raise ValueError(f'Invalid character "{char}" at position {i}')
+                raise TokenizationError(f'Invalid character "{
+                                        char}" at position {i}')
 
         return self._tokens
 

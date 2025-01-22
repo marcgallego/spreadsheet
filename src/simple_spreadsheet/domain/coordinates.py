@@ -39,7 +39,6 @@ class Column:
 
 
 class Coordinates(Operand, Argument):
-
     def __init__(self, row: int, col: int) -> None:
         self._row = row
         self._col = col

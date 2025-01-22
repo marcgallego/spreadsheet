@@ -25,12 +25,12 @@ class CellRange(Argument):
                 coords.append(Coordinates(row, col))
         return coords
 
-    def get_coords(self) -> list[Coordinates]:
+    def get_all_coords(self) -> list[Coordinates]:
         return self._coords_in_range
 
     def evaluate_arg(self, spreadsheet) -> list[float]:
         values = []
-        coords_list = self.get_coords()
+        coords_list = self.get_all_coords()
         for coords in coords_list:
             cell = spreadsheet.get_cell(coords)
             values.append(cell.get_value_as_float())
