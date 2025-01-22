@@ -20,7 +20,7 @@ class Grid(DataTable):
         self.fixed_columns = 1
 
         rows = self.controller.spreadsheet.get_rows()
-        vals = self.controller.spreadsheet.get_all_values()
+        vals = self.controller.spreadsheet.get_all_values_as_str()
 
         for i, row_name in enumerate(rows):
             row_vals = vals[i]

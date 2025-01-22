@@ -46,8 +46,7 @@ class Spreadsheet:
         coords = Coordinates(row, col)
         return self.get_cell(coords)
 
-    # TODO: rename
-    def get_all_values(self) -> list[list[Content]]:
+    def get_all_values_as_str(self) -> list[list[Content]]:
         return [[cell.get_value_as_str() for cell in row] for row in self._cells]
 
     def set_content(self, coordinates, content: Content) -> None:
