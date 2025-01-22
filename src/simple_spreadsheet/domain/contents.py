@@ -83,8 +83,6 @@ class Formula(Content):
 
         return dependencies
 
-    # TODO: caldrà implementar un mètode per a gravar com a fitxer
-
 
 class Number(Content):
     _type = ContentType.NUMBER
