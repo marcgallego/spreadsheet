@@ -1,5 +1,5 @@
 from typing import Union
-from simple_spreadsheet.domain.coordinates import Coordinates
+from ..coordinates import Coordinates
 
 type Token = Union[str, float, Coordinates]
 

@@ -1,6 +1,6 @@
 from typing import Union
-from simple_spreadsheet.domain.coordinates import Coordinates
-from simple_spreadsheet.domain.contents import Number
+from ..coordinates import Coordinates
+from ..contents import Number
 from .consts import Token, DECIMAL_SEPARATOR, SPECIAL_CHARS, FUNCTIONS, UNARY_OPERATORS, CLOSING_PARENTHESIS
 
 

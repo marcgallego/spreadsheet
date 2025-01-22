@@ -1,4 +1,4 @@
-from simple_spreadsheet.usecase.controller import Controller
+from .usecase.controller import Controller
 
 
 def main() -> None:

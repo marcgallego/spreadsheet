@@ -1,4 +1,4 @@
-from simple_spreadsheet.domain.coordinates import Coordinates
+from .coordinates import Coordinates
 
 
 class CircularDependencyException(Exception):
