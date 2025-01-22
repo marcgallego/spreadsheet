@@ -1,5 +1,5 @@
 from simple_spreadsheet.domain.spreadsheet import Spreadsheet
-from simple_spreadsheet.domain.contents import ContentFactory, ContentType
+from simple_spreadsheet.domain.contents import ContentFactory
 from simple_spreadsheet.domain.coordinates import Coordinates
 
 
@@ -25,7 +25,7 @@ class FileManager:
         """Converts a cell's content into a string for file saving."""
         content = cell.get_content()
         if content is not None:
-            if content.type == ContentType.FORMULA:
+            if content.is_formula():
                 return content.expression.replace(";", ",")
             else:
                 return content.get_value_as_str()

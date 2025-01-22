@@ -5,14 +5,8 @@ from .formula_component import FormulaComponent, ComponentType
 from .coordinates import Coordinates
 
 
-class ContentType(Enum):
-    TEXT = auto()
-    NUMBER = auto()
-    FORMULA = auto()
-
-
 class Content(ABC):
-    _type: ContentType
+    """Base class for cell contents."""
 
     @abstractmethod
     def set_value(self) -> None:
@@ -25,9 +19,8 @@ class Content(ABC):
     def get_value_as_str(self) -> str:
         return str(self._value)
 
-    @property
-    def type(self) -> ContentType:
-        return self._type
+    def is_formula(self) -> bool:
+        return False
 
 
 class ContentFactory():
@@ -43,8 +36,6 @@ class ContentFactory():
 
 
 class Formula(Content):
-    _type = ContentType.FORMULA
-
     def __init__(self, expression: str) -> None:
         if not isinstance(expression, str):
             raise ValueError('Expression must be a string')
@@ -83,10 +74,11 @@ class Formula(Content):
 
         return dependencies
 
+    def is_formula(self) -> bool:
+        return True
 
-class Number(Content):
-    _type = ContentType.NUMBER
 
+class Number(Content, FormulaComponent):
     def __init__(self, value: float | int) -> None:
         if not isinstance(value, (float, int)):
             raise ValueError('Value must be a number')
@@ -103,8 +95,6 @@ class Number(Content):
 
 
 class Text(Content):
-    _type = ContentType.TEXT
-
     def __init__(self, value: str) -> None:
         if not isinstance(value, str):
             raise ValueError('Value must be a string')

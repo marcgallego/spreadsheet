@@ -1,7 +1,7 @@
 
 from simple_spreadsheet.domain.spreadsheet import Spreadsheet
 from simple_spreadsheet.domain.coordinates import Coordinates
-from simple_spreadsheet.domain.contents import ContentFactory, ContentType
+from simple_spreadsheet.domain.contents import ContentFactory
 from simple_spreadsheet.domain.formula_evaluation import FormulaEvaluator
 from simple_spreadsheet.domain.update_manager import UpdateManager
 from simple_spreadsheet.framework.file_manager import FileManager
@@ -21,7 +21,7 @@ class ControllerForChecker(ISpreadsheetControllerForChecker):
     def _recompute_cells(self, cells: list[Coordinates]) -> None:
         for cell in cells:
             content = self._spreadsheet.get_cell(cell).get_content()
-            if content.type == ContentType.FORMULA:
+            if content.is_formula():
                 self._formula_evaluator.evaluate(content, self._spreadsheet)
                 self._spreadsheet.set_content(cell, content)
 
@@ -31,7 +31,7 @@ class ControllerForChecker(ISpreadsheetControllerForChecker):
     def _create_and_assign_content(self, coords: Coordinates, value: str) -> None:
         new_content = ContentFactory.create(value)
         dependencies = None
-        if new_content.type == ContentType.FORMULA:  # aquest if està bé
+        if new_content.is_formula():  # aquest if està bé
             self._formula_evaluator.evaluate(new_content, self._spreadsheet)
             dependencies = new_content.get_dependencies()
             self._update_manager.has_circular_dependency(coords, dependencies)
