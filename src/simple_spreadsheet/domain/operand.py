@@ -11,9 +11,5 @@ class Operand(FormulaComponent):
     def evaluate(self) -> float:
         pass
 
-    @abstractmethod
-    def get_dependencies(self) -> set:
-        pass
-
     def accept(self, visitor: 'Visitor') -> None:
         visitor.visit_operand(self)

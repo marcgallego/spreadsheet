@@ -22,6 +22,9 @@ class FormulaComponent(ABC):
     def accept(self, visitor: 'Visitor') -> None:
         pass
 
+    def get_dependencies(self) -> set:
+        return set()
+
 
 class OpeningParenthesis(FormulaComponent):
     _type = ComponentType.OPENING_PARENTHESIS
