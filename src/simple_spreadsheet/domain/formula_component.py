@@ -18,22 +18,16 @@ class FormulaComponent(ABC):
     def type(self) -> ComponentType:
         return self._type
 
-
-class Operand(FormulaComponent):
-    """Base class for formula operands."""
-    _type = ComponentType.OPERAND
-
     @abstractmethod
-    def evaluate(self) -> float:
-        pass
-
-    @abstractmethod
-    def get_dependencies(self) -> set:
+    def accept(self, visitor: 'Visitor') -> None:
         pass
 
 
 class OpeningParenthesis(FormulaComponent):
     _type = ComponentType.OPENING_PARENTHESIS
+
+    def accept(self, visitor: 'Visitor') -> None:
+        visitor.visit_opening_parenthesis(self)
 
     def __init__(self) -> None:
         self._symbol = '('
@@ -48,6 +42,9 @@ class OpeningParenthesis(FormulaComponent):
 
 class ClosingParenthesis(FormulaComponent):
     _type = ComponentType.CLOSING_PARENTHESIS
+
+    def accept(self, visitor: 'Visitor') -> None:
+        visitor.visit_closing_parenthesis(self)
 
     def __init__(self) -> None:
         self._symbol = ')'

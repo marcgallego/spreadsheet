@@ -13,9 +13,8 @@ class FormulaEvaluator:
         self._tokenizer = Tokenizer()
         self._validator = Validator()
         self._parser = Parser()
-        self._postfix_evaluator = PostfixEvaluator()
 
-    def evaluate(self, formula: Formula, spreadsheet: Spreadsheet) -> None:
+    def get_postfix(self, formula: Formula) -> list:
         postfix = formula.get_postfix()
         if postfix is None:
             expression = formula.expression[1:] # remove '='
@@ -24,5 +23,10 @@ class FormulaEvaluator:
             components = self._parser.tokens_to_components(tokens)
             postfix = self._parser.infix_to_postfix(components)
             formula.set_postfix(postfix)
-        value = self._postfix_evaluator.evaluate(postfix, spreadsheet)
+        
+        return postfix
+
+    def evaluate(self, formula: Formula, spreadsheet: Spreadsheet) -> None:
+        postfix = self.get_postfix(formula)
+        value = PostfixEvaluator(spreadsheet).evaluate(postfix)
         formula.set_value(value)

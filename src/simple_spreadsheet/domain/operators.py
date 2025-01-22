@@ -1,6 +1,7 @@
 from abc import abstractmethod
 
-from .formula_component import FormulaComponent, Operand, ComponentType
+from .formula_component import FormulaComponent, ComponentType
+from .operand import Operand
 from .contents import Number
 from .spreadsheet import Spreadsheet
 
@@ -30,6 +31,9 @@ class BinaryOperator(FormulaComponent):
     def _evaluate_operand(self, operand: Operand, spreadsheet: Spreadsheet) -> float:
         result = operand.evaluate(spreadsheet)
         return result if result is not None else 0.0
+
+    def accept(self, visitor: 'Visitor') -> None:
+        visitor.visit_operator(self)
 
     def __repr__(self) -> str:
         return self._symbol

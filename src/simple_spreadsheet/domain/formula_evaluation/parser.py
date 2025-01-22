@@ -1,14 +1,13 @@
 from typing import Union, List
 
-from ..formula_component import ComponentType, OpeningParenthesis, ClosingParenthesis
+from ..formula_component import FormulaComponent, ComponentType, OpeningParenthesis, ClosingParenthesis
 from ..functions import Function, FunctionFactory
-from ..cell_range import CellRange
 from ..operators import BinaryOperatorFactory, BinaryOperator
 from ..coordinates import Coordinates
+from ..cell_range import CellRange
 from ..contents import Number
 from .consts import OPERATORS, FUNCTIONS, RANGE_SEPARATOR, PARAM_SEPARATOR
 
-type Component = Union[float, Coordinates, Function, BinaryOperator]
 
 
 class Parser:
@@ -56,7 +55,7 @@ class Parser:
         function = FunctionFactory.create(function_name, args)
         return function, i
 
-    def tokens_to_components(self, tokens: List[str]) -> List[Component]:
+    def tokens_to_components(self, tokens: List[str]) -> List[FormulaComponent]:
         """Converts a list of tokens into Component objects."""
         components = []
         i = 0
@@ -81,7 +80,7 @@ class Parser:
 
         return components
 
-    def infix_to_postfix(self, components: List[Component]) -> List[Component]:
+    def infix_to_postfix(self, components: List[FormulaComponent]) -> List[FormulaComponent]:
         """Converts a list of Components in infix order to postfix order."""
         output = []
         stack = []

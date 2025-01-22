@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
-from .formula_component import FormulaComponent, Operand, ComponentType
+from .formula_component import FormulaComponent, ComponentType
+from .operand import Operand
 from .functions import Argument
 from .coordinates import Coordinates
 

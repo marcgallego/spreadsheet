@@ -1,26 +1,34 @@
 from ..spreadsheet import Spreadsheet
-from ..formula_component import ComponentType, FormulaComponent
+from ..formula_component import FormulaComponent
+from .visitor import Visitor
 
 
-class PostfixEvaluator:
-    def evaluate(self, postfix: list[FormulaComponent], spreadsheet: Spreadsheet) -> float:
-        stack = []
+class PostfixEvaluator(Visitor):
+    def __init__(self, spreadsheet: Spreadsheet) -> None:
+        self._stack = []
+        self._spreadsheet = spreadsheet
+
+    def visit_operand(self, operand) -> None:
+        self._stack.append(operand)
+
+    def visit_operator(self, operator) -> None:
+        operand2 = self._stack.pop()
+        operand1 = self._stack.pop()
+        result = operator.operate(operand1, operand2, self._spreadsheet)
+        self._stack.append(result)
+
+    def visit_opening_parenthesis(self, _) -> None:
+        raise ValueError("Invalid postfix expression.")
+
+    def visit_closing_parenthesis(self, _) -> None:
+        raise ValueError("Invalid postfix expression.")
+
+    def evaluate(self, postfix: list[FormulaComponent]) -> float:
+        self._stack.clear()
         for component in postfix:
-            component_type = component.type
+            component.accept(self)
 
-            if component_type == ComponentType.OPERAND:
-                stack.append(component)
-            elif component_type == ComponentType.OPERATOR:
-                # Pop the required number of operands for the operator
-                operand2 = stack.pop()
-                operand1 = stack.pop()
+        if len(self._stack) != 1:
+            raise ValueError("Invalid postfix expression.")
 
-                result = component.operate(operand1, operand2, spreadsheet)
-                stack.append(result)
-
-        if len(stack) != 1:
-            raise ValueError(
-                "Invalid postfix expression: stack does not contain exactly one element.")
-
-        result = stack.pop().evaluate(spreadsheet)
-        return result
+        return self._stack.pop().evaluate(self._spreadsheet)
