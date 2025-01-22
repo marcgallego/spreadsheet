@@ -1,7 +1,10 @@
 from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING
 
 from .formula_components import Operand
 
+if TYPE_CHECKING:
+    from .spreadsheet import Spreadsheet
 
 class Argument(ABC):
     @abstractmethod

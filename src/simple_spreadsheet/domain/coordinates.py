@@ -1,12 +1,14 @@
 import re
+from typing import TYPE_CHECKING
 
 from .formula_components import Operand
 from .functions import Argument
 from .consts import NUM_ROWS, NUM_COLS
 
-ABC_LEN = 26
+if TYPE_CHECKING:
+    from .spreadsheet import Spreadsheet
 
-# TODO: no puc importar Spreadsheet pels type hints, dona circular import
+ABC_LEN = 26
 
 
 class Column:

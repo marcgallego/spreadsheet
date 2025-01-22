@@ -1,8 +1,12 @@
 from abc import abstractmethod
+from typing import TYPE_CHECKING
 
 from .formula_components import FormulaComponent, Operand
 from .contents import Number
 from .spreadsheet import Spreadsheet
+
+if TYPE_CHECKING:
+    from .formula_evaluation.visitor import Visitor
 
 
 class BinaryOperator(FormulaComponent):

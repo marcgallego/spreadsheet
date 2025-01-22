@@ -1,4 +1,8 @@
 from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .formula_evaluation.visitor import Visitor
 
 
 class FormulaComponent(ABC):
@@ -22,13 +26,14 @@ class Operand(FormulaComponent):
     def accept(self, visitor: 'Visitor') -> None:
         visitor.visit_operand(self)
 
+
 class Parenthesis(FormulaComponent):
     """Base class for parenthesis."""
     _symbol: str
 
     def __repr__(self) -> str:
         return self._symbol
-    
+
     @property
     def symbol(self) -> str:
         return self._symbol
@@ -40,6 +45,7 @@ class OpeningParenthesis(Parenthesis):
 
     def accept(self, visitor: 'Visitor') -> None:
         visitor.visit_opening_parenthesis(self)
+
 
 class ClosingParenthesis(Parenthesis):
     def __init__(self) -> None:
