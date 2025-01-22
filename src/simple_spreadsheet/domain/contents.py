@@ -91,6 +91,11 @@ class Number(Content, Operand, Argument):
     def get_value_as_float(self) -> float:
         return self._value
 
+    def get_value_as_str(self) -> str:
+        if self._value.is_integer():
+            return str(int(self._value))
+        return str(self._value)
+
     def evaluate(self, _) -> float:
         return self._value
 
