@@ -5,6 +5,8 @@ from .formula_components import Operand
 
 if TYPE_CHECKING:
     from .spreadsheet import Spreadsheet
+    from .coordinates import Coordinates
+
 
 class Argument(ABC):
     @abstractmethod
@@ -12,7 +14,7 @@ class Argument(ABC):
         pass
 
     @abstractmethod
-    def get_dependencies(self) -> set:
+    def get_dependencies(self) -> set['Coordinates']:
         pass
 
 
@@ -49,7 +51,7 @@ class Function(Operand, Argument):
     def evaluate_arg(self, spreadsheet: 'Spreadsheet') -> list[float]:
         return [self.evaluate(spreadsheet)]
 
-    def get_dependencies(self) -> set:
+    def get_dependencies(self) -> set['Coordinates']:
         dependencies = set()
         for arg in self._args:
             dependencies.update(arg.get_dependencies())

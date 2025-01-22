@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from .coordinates import Coordinates
     from .formula_evaluation.visitor import Visitor
 
 
@@ -12,7 +13,7 @@ class FormulaComponent(ABC):
     def accept(self, visitor: 'Visitor') -> None:
         pass
 
-    def get_dependencies(self) -> set:
+    def get_dependencies(self) -> set['Coordinates']:
         return set()
 
 
