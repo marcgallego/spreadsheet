@@ -25,6 +25,7 @@ class Function(FormulaComponent):
 
     def _evaluate_argument(self, arg: Argument, spreadsheet: Spreadsheet) -> list[float]:
         """Evaluates an argument and returns numeric values, excluding `None`."""
+        # TODO: use inheritance instead of type checking, e.g. `arg.evaluate()`
         if isinstance(arg, float):
             return [arg]
         if isinstance(arg, Coordinates):
