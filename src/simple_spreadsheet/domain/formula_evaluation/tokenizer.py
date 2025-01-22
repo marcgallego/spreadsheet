@@ -1,12 +1,13 @@
 from typing import Union
 from simple_spreadsheet.domain.coordinates import Coordinates
-from .consts import Token, DECIMAL_SEPARATOR, SPECIAL_CHARS, FUNCTIONS
+from .consts import Token, DECIMAL_SEPARATOR, SPECIAL_CHARS, FUNCTIONS, UNARY_OPERATORS
 
 
 class Tokenizer:
     def __init__(self) -> None:
         self._tokens: list[Token] = []
         self._decimal_separator = DECIMAL_SEPARATOR
+        self._unary_operators = UNARY_OPERATORS
         self._special_chars = SPECIAL_CHARS
         self._functions = FUNCTIONS
 
@@ -14,12 +15,18 @@ class Tokenizer:
         """Checks if a character is a digit or the decimal separator."""
         return char.isdigit() or char == self._decimal_separator
 
-    def _extract_number(self, expression: str, start_index: int) -> tuple[float, int]:
+    def _extract_number(self, expression: str, start_index: int, include_sign: bool = True) -> tuple[float, int]:
         """Extracts a numeric token from the expression."""
         num = ''
         decimal_separator_seen = False
         n = len(expression)
         i = start_index
+
+        # Handle sign if needed
+        if include_sign and i < n and expression[i] in self._unary_operators:
+            num += expression[i]
+            i += 1
+
         while i < n and self._is_valid_numeric_char(expression[i]):
             if expression[i] == self._decimal_separator:
                 if decimal_separator_seen:
@@ -28,6 +35,10 @@ class Tokenizer:
                 decimal_separator_seen = True
             num += expression[i]
             i += 1
+
+        if num in self._unary_operators:  # Handle alone signs
+            raise ValueError(f'Invalid number at position {start_index}')
+
         return float(num), i
 
     def _extract_cell_or_function(self, expression: str, start_index: int) -> tuple[Union[str, Coordinates], int]:
@@ -43,9 +54,18 @@ class Tokenizer:
             upper_var = var.upper()
             if upper_var in self._functions:
                 return upper_var, i
-            raise ValueError(
-                f'Invalid function "{var}" at position {start_index}')
+            raise ValueError(f'Invalid function "{
+                             var}" at position {start_index}')
         return Coordinates.from_id(var), i
+
+    def _is_binary_operator_context(self, prev_token: Token | None) -> bool:
+        """
+        Determines if the current context suggests a binary operator.
+        Returns True if the previous token is a number, cell reference, or closing parenthesis.
+        """
+        return (prev_token is not None and
+                (isinstance(prev_token, (float, Coordinates)) or
+                 (isinstance(prev_token, str) and prev_token == ')')))
 
     def tokenize(self, expression: str) -> list[Token]:
         """Tokenizes the given mathematical expression."""
@@ -57,16 +77,37 @@ class Tokenizer:
             char = expression[i]
             if char.isspace():
                 i += 1
-            elif self._is_valid_numeric_char(char):  # Handle numbers
-                num, i = self._extract_number(expression, i)
+                continue
+
+            prev_token = self._tokens[-1] if self._tokens else None
+
+            if char in self._unary_operators:
+                if self._is_binary_operator_context(prev_token):
+                    self._tokens.append(char)
+                    i += 1
+                else:
+                    try:
+                        num, i = self._extract_number(
+                            expression, i, include_sign=True)
+                        self._tokens.append(num)
+                    except ValueError as e:
+                        if char in self._unary_operators:
+                            self._tokens.append(char)
+                            i += 1
+                        else:
+                            raise ValueError(
+                                f'Invalid number format at position {i}') from e
+            elif self._is_valid_numeric_char(char):
+                num, i = self._extract_number(
+                    expression, i, include_sign=False)
                 self._tokens.append(num)
-            elif char.isalpha():  # Handle cells and functions
+            elif char.isalpha():
                 var, i = self._extract_cell_or_function(expression, i)
                 self._tokens.append(var)
-            elif char in self._special_chars:  # Handle operators and delimiters
+            elif char in self._special_chars:
                 self._tokens.append(char)
                 i += 1
-            else:  # Invalid character
+            else:
                 raise ValueError(f'Invalid character "{char}" at position {i}')
 
         return self._tokens
