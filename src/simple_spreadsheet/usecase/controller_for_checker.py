@@ -49,7 +49,7 @@ class ControllerForChecker(ISpreadsheetControllerForChecker):
         value = cell.get_value_as_float()
         if value is None:
             raise NoNumberException(f"Cell {coord} does not contain a number")
-        return cell.get_value_as_float()
+        return value
 
     def get_cell_content_as_string(self, coord) -> str:
         coords = Coordinates.from_id(coord)
