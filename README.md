@@ -69,7 +69,7 @@ cd tests/automatic_grader
 PYTHONPATH=$PYTHONPATH:../../../spreadsheet python markerrun/TestsRunner.py
 ```
 
-Note: This instruction assumes that you have Python 3 installed on your machine and that you are using a Unix-like operating system. If you are using Windows, the commands may be slightly different.
+<strong>Note:</strong> This instruction assumes that you have Python 3 installed on your machine and that you are using a Unix-like operating system. If you are using Windows, the commands may be slightly different.
 
 ### Useful commands
 
