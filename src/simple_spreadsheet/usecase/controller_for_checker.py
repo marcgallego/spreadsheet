@@ -7,6 +7,7 @@ from simple_spreadsheet.domain.update_manager import UpdateManager
 from simple_spreadsheet.framework.file_manager import FileManager
 
 from tests.automatic_grader.usecasesmarker import ISpreadsheetControllerForChecker
+from tests.automatic_grader.entities.no_number_exception import NoNumberException
 
 # TODO: revisar si es llançen les excepcions de tests
 
@@ -31,7 +32,7 @@ class ControllerForChecker(ISpreadsheetControllerForChecker):
     def _create_and_assign_content(self, coords: Coordinates, value: str) -> None:
         new_content = ContentFactory.create(value)
         dependencies = None
-        if new_content.is_formula():  # aquest if està bé
+        if new_content.is_formula():
             self._formula_evaluator.evaluate(new_content, self._spreadsheet)
             dependencies = new_content.get_dependencies()
             self._update_manager.has_circular_dependency(coords, dependencies)
@@ -46,6 +47,9 @@ class ControllerForChecker(ISpreadsheetControllerForChecker):
     def get_cell_content_as_float(self, coord) -> float:
         coords = Coordinates.from_id(coord)
         cell = self._spreadsheet.get_cell(coords)
+        value = cell.get_value_as_float()
+        if value is None:
+            raise NoNumberException(f"Cell {coord} does not contain a number")
         return cell.get_value_as_float()
 
     def get_cell_content_as_string(self, coord) -> str:
