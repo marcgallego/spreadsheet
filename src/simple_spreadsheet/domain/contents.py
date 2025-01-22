@@ -35,9 +35,11 @@ class ContentFactory():
     def create(value: str | int | float) -> Content:
         if isinstance(value, str) and value.startswith('='):
             return Formula(value)
-        if isinstance(value, int) or isinstance(value, float):
+        try:
+            value = float(value)
             return Number(value)
-        return Text(value)
+        except ValueError:
+            return Text(value)
 
 
 class Formula(Content):
