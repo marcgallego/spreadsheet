@@ -16,9 +16,11 @@ class Content(ABC):
         return self._value
 
     def get_value_as_str(self) -> str:
-        if self._value.is_integer():
-            return str(int(self._value))
         return str(self._value)
+
+    @abstractmethod
+    def get_value_to_dump(self) -> str:
+        pass
 
     def is_formula(self) -> bool:
         return False
@@ -63,6 +65,9 @@ class Formula(Content):
     def set_value(self, value: float) -> None:
         self._value = value
 
+    def get_value_to_dump(self) -> str:
+        return '=' + self._expression.replace(";", ",")
+
     def get_dependencies(self) -> set[Coordinates]:
         dependencies = set()
         for component in self._postfix:
@@ -85,6 +90,11 @@ class Number(Content, Operand, Argument):
 
     def set_value(self, value: float) -> None:
         self._value = value
+
+    def get_value_to_dump(self) -> str:
+        if self._value.is_integer():
+            return str(int(self._value))
+        return str(self._value)
 
     def evaluate(self, _) -> float:
         return self._value
@@ -118,4 +128,7 @@ class Text(Content):
                 f'"{self._value}" can not be converted to float')
 
     def get_value_as_str(self) -> str:
+        return self._value
+
+    def get_value_to_dump(self) -> str:
         return self._value

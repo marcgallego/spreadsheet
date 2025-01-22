@@ -21,16 +21,6 @@ class FileManager:
                         spreadsheet.set_content(coords, content)
         return spreadsheet, coords_with_formulas
 
-    def _get_content_to_dump(self, cell) -> str:
-        """Converts a cell's content into a string for file saving."""
-        content = cell.get_content()
-        if content is not None:
-            if content.is_formula():
-                return content.expression.replace(";", ",")
-            else:
-                return content.get_value_as_str()
-        return ''
-
     def _write_file(self, file_path: str, output: list[list[str]]) -> None:
         """Writes the processed content to a file."""
         with open(file_path, "w") as file:
@@ -48,7 +38,7 @@ class FileManager:
             last_non_empty_col = -1
 
             for col_index, cell in enumerate(row):
-                cell_output = self._get_content_to_dump(cell)
+                cell_output = cell.get_value_to_dump()
                 row_output.append(cell_output)
                 if cell_output != "":
                     last_non_empty_col = col_index

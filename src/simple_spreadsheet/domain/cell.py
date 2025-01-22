@@ -16,3 +16,6 @@ class Cell:
 
     def get_value_as_str(self) -> str:
         return self.content.get_value_as_str() if self.content else ''
+
+    def get_value_to_dump(self) -> str:
+        return self.content.get_value_to_dump() if self.content else ''
