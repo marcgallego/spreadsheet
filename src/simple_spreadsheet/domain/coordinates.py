@@ -1,8 +1,11 @@
 import re
-from .formula_component import FormulaComponent, ComponentType
+
+from .formula_component import Operand
 from .consts import NUM_ROWS, NUM_COLS
 
 ABC_LEN = 26
+
+# TODO: no puc importar Spreadsheet pels type hints, dona circular import
 
 
 class Column:
@@ -24,8 +27,7 @@ class Column:
         return letters
 
 
-class Coordinates(FormulaComponent):
-    _type = ComponentType.OPERAND
+class Coordinates(Operand):
 
     def __init__(self, row: int, col: int) -> None:
         self._row = row
@@ -79,6 +81,9 @@ class Coordinates(FormulaComponent):
 
     def get_dependencies(self) -> set['Coordinates']:
         return {self}
+
+    def evaluate(self, spreadsheet: Spreadsheet) -> float:
+        return spreadsheet.get_cell(self).get_value_as_float()
 
     @property
     def id(self) -> str:

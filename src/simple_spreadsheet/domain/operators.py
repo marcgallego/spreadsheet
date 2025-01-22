@@ -1,13 +1,7 @@
-from typing import Union
 from abc import abstractmethod
 
-from .formula_component import FormulaComponent, ComponentType
-from .coordinates import Coordinates
-from .functions import Function
-from .contents import Number
+from .formula_component import FormulaComponent, Operand, ComponentType
 from .spreadsheet import Spreadsheet
-
-type Operand = Union[float, Coordinates, Function]
 
 
 class BinaryOperator(FormulaComponent):
@@ -26,24 +20,15 @@ class BinaryOperator(FormulaComponent):
         right_value = self._evaluate_operand(right, spreadsheet)
         return self._compute(left_value, right_value)
 
-    def _is_valid_operand(self, operand: Operand) -> bool:
-        return isinstance(operand, (Number, Coordinates, Function))
-
     def _validate_operands(self, left: Operand, right: Operand) -> None:
-        if not self._is_valid_operand(left):
+        if not isinstance(left, Operand):
             raise TypeError(f"Invalid operand type: {type(left)}")
-        if not self._is_valid_operand(right):
+        if not isinstance(right, Operand):
             raise TypeError(f"Invalid operand type: {type(right)}")
 
     def _evaluate_operand(self, operand: Operand, spreadsheet: Spreadsheet) -> float:
-        if isinstance(operand, Number):
-            return operand.get_value_as_float()
-        if isinstance(operand, Coordinates):
-            val = spreadsheet.get_cell(operand).get_value_as_float()
-            return val if val is not None else 0.0
-        if isinstance(operand, Function):
-            return operand.evaluate(spreadsheet)
-        raise TypeError(f"Unexpected operand type: {type(operand)}")
+        result = operand.evaluate(spreadsheet)
+        return result if result is not None else 0.0
 
     def __repr__(self) -> str:
         return self._symbol

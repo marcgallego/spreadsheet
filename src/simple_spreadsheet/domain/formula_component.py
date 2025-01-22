@@ -1,4 +1,4 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 from enum import Enum, auto
 
 
@@ -17,6 +17,19 @@ class FormulaComponent(ABC):
     def get_type(self) -> str:
         """Return the type of the component."""
         return self._type
+
+
+class Operand(FormulaComponent):
+    """Base class for formula operands."""
+    _type = ComponentType.OPERAND
+
+    @abstractmethod
+    def evaluate(self) -> float:
+        pass
+
+    @abstractmethod
+    def get_dependencies(self) -> set:
+        pass
 
 
 class OpeningParenthesis(FormulaComponent):
