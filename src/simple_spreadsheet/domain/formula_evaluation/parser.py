@@ -1,48 +1,49 @@
-from ..formula_component import FormulaComponent, ComponentType, OpeningParenthesis, ClosingParenthesis
+from ..formula_component import FormulaComponent, OpeningParenthesis, ClosingParenthesis
 from ..functions import Function, FunctionFactory
-from ..operators import BinaryOperatorFactory, BinaryOperator
+from ..operators import BinaryOperatorFactory
 from ..cell_range import CellRange
 from ..contents import Number
-from .consts import OPERATORS, FUNCTIONS, RANGE_SEPARATOR, PRECEDENCE, PARAM_SEPARATOR
+from .consts import OPERATORS, FUNCTIONS, RANGE_SEPARATOR, PARAM_SEPARATOR, OPENING_PARENTHESIS, CLOSING_PARENTHESIS
 
 
-class Parser:
+class Parser():
     """Parser to convert tokenized formulas into Components and generate postfix expressions."""
 
     def __init__(self) -> None:
         self._operators = OPERATORS
         self._functions = FUNCTIONS
         self._range_separator = RANGE_SEPARATOR
-        self._precedence = PRECEDENCE
+        self._opening_parenthesis = OPENING_PARENTHESIS
+        self._closing_parenthesis = CLOSING_PARENTHESIS
 
-    def parse_function(self, tokens: list[str], position: int) -> tuple[Function, int]:
+    def _parse_function(self, tokens: list[str], position: int) -> tuple[Function, int]:
         """Parses a function call and returns a Function object."""
         function_name = tokens[position]
         args = []
-        i = position + 2  # Skip the function name and "("
+        i = position + 2  # Skip the function name and opening parenthesis
         n = len(tokens)
 
         is_function_complete = False
         while i < n and not is_function_complete:
             token = tokens[i]
-            if token == ")":
+            if token == self._closing_parenthesis:
                 is_function_complete = True
                 i += 1
             elif token == PARAM_SEPARATOR:
                 i += 1
             elif token in self._functions:
-                arg, i = self.parse_function(tokens, i)
+                arg, i = self._parse_function(tokens, i)
                 args.append(arg)
             elif isinstance(token, Number):
                 args.append(token)
                 i += 1
-            else:  # Token is a cell reference (Coordinates)
+            else:  # Cell reference or range
                 if i + 1 < n and tokens[i + 1] == self._range_separator:
                     range_end = tokens[i + 2]
                     args.append(CellRange(token, range_end))
                     i += 3
                 else:
-                    args.append(token)
+                    args.append(token)  # Cell reference
                     i += 1
 
         function = FunctionFactory.create(function_name, args)
@@ -56,15 +57,15 @@ class Parser:
         while i < len(tokens):
             token = tokens[i]
             if token in self._functions:
-                function, i = self.parse_function(tokens, i)
+                function, i = self._parse_function(tokens, i)
                 components.append(function)
             elif token in self._operators:
                 components.append(BinaryOperatorFactory.create(token))
                 i += 1
-            elif token == "(":
+            elif token == self._opening_parenthesis:
                 components.append(OpeningParenthesis())
                 i += 1
-            elif token == ")":
+            elif token == self._closing_parenthesis:
                 components.append(ClosingParenthesis())
                 i += 1
             else:
@@ -72,32 +73,3 @@ class Parser:
                 i += 1
 
         return components
-
-    def infix_to_postfix(self, components: list[FormulaComponent]) -> list[FormulaComponent]:
-        """Converts a list of Components in infix order to postfix order."""
-        output = []
-        stack = []
-        precedence = self._precedence
-
-        for component in components:
-            component_type = component.type
-
-            if component_type == ComponentType.OPERAND:
-                output.append(component)
-            elif component_type == ComponentType.OPERATOR:
-                while (stack and isinstance(stack[-1], BinaryOperator) and
-                       precedence.get(stack[-1].symbol, 0) >= precedence.get(component.symbol, 0)):
-                    output.append(stack.pop())
-                stack.append(component)
-            elif component_type == ComponentType.OPENING_PARENTHESIS:
-                stack.append(component)
-            elif component_type == ComponentType.CLOSING_PARENTHESIS:
-                while stack and stack[-1].symbol != "(":
-                    output.append(stack.pop())
-                if stack and stack[-1].symbol == "(":
-                    stack.pop()
-
-        while stack:
-            output.append(stack.pop())
-
-        return output
