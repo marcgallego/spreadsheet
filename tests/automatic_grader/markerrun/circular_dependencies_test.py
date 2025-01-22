@@ -2,7 +2,7 @@ import traceback
 from markerrun.ClasesCorrector import SuperClassForTests
 from usecasesmarker.spread_sheet_factory_for_checker import SpreadSheetFactoryForChecker
 
-from simple_spreadsheet.domain.update_manager import CircularDependencyException
+from simple_spreadsheet.domain.dependency_manager import CircularDependencyException
 
 
 class CircularDependenciesTest(SuperClassForTests):

@@ -2,7 +2,6 @@ from .coordinates import Coordinates
 
 
 class CircularDependencyException(Exception):
-
     def __init__(self) -> None:
         Exception.__init__(self)
 
@@ -10,7 +9,7 @@ class CircularDependencyException(Exception):
         Exception.__init__(self, msg)
 
 
-class UpdateManager:
+class DependencyManager:
     def __init__(self) -> None:
         self._dependencies = {}
 

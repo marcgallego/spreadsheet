@@ -3,7 +3,7 @@ from ..domain.spreadsheet import Spreadsheet
 from ..domain.coordinates import Coordinates
 from ..domain.contents import ContentFactory
 from ..domain.formula_evaluation import FormulaEvaluator
-from ..domain.update_manager import UpdateManager
+from ..domain.dependency_manager import DependencyManager
 from ..framework.file_manager import FileManager
 
 from tests.automatic_grader.usecasesmarker import ISpreadsheetControllerForChecker
@@ -14,7 +14,7 @@ class ControllerForChecker(ISpreadsheetControllerForChecker):
     def __init__(self) -> None:
         self._spreadsheet = Spreadsheet()
         self._formula_evaluator = FormulaEvaluator()
-        self._update_manager = UpdateManager()  # TODO: rename
+        self._deps_manager = DependencyManager()
         self._file_manager = FileManager()
 
     def _recompute_cells(self, cells: list[Coordinates]) -> None:
@@ -24,7 +24,7 @@ class ControllerForChecker(ISpreadsheetControllerForChecker):
                 self._formula_evaluator.evaluate(content, self._spreadsheet)
                 self._spreadsheet.set_content(cell, content)
 
-                dependants = self._update_manager.get_dependents(cell)
+                dependants = self._deps_manager.get_dependents(cell)
                 self._recompute_cells(dependants)
 
     def _create_and_assign_content(self, coords: Coordinates, value: str) -> None:
@@ -33,11 +33,11 @@ class ControllerForChecker(ISpreadsheetControllerForChecker):
         if new_content.is_formula():
             self._formula_evaluator.get_postfix(new_content)
             dependencies = new_content.get_dependencies()
-            self._update_manager.has_circular_dependency(coords, dependencies)
+            self._deps_manager.has_circular_dependency(coords, dependencies)
             self._formula_evaluator.evaluate(new_content, self._spreadsheet)
         self._spreadsheet.set_content(coords, new_content)
-        self._update_manager.set_dependencies(coords, dependencies)
-        self._recompute_cells(self._update_manager.get_dependents(coords))
+        self._deps_manager.set_dependencies(coords, dependencies)
+        self._recompute_cells(self._deps_manager.get_dependents(coords))
 
     def set_cell_content(self, coord, str_content) -> None:
         coords = Coordinates.from_id(coord)
@@ -68,6 +68,6 @@ class ControllerForChecker(ISpreadsheetControllerForChecker):
         spreadsheet, coords_with_formulas = self._file_manager.read(
             s_name_in_user_dir)
         self._formula_evaluator = FormulaEvaluator()
-        self._update_manager = UpdateManager()
+        self._deps_manager = DependencyManager()
         self._spreadsheet = spreadsheet
         self._recompute_cells(coords_with_formulas)
