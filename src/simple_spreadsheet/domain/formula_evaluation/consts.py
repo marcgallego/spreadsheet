@@ -5,7 +5,13 @@ type Token = Union[str, float, Coordinates]
 
 FUNCTIONS = frozenset({'SUMA', 'PROMEDIO', 'MAX', 'MIN'})
 
-OPERATORS = frozenset({'+', '-', '*', '/'})
+PRECEDENCE = {
+    '+': 1,
+    '-': 1,
+    '*': 2,
+    '/': 2,
+}
+OPERATORS = frozenset(PRECEDENCE.keys())
 UNARY_OPERATORS = frozenset({'+', '-'})  # Only used for numbers
 
 DECIMAL_SEPARATOR = '.'

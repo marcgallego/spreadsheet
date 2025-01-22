@@ -1,13 +1,9 @@
-from typing import Union, List
-
 from ..formula_component import FormulaComponent, ComponentType, OpeningParenthesis, ClosingParenthesis
 from ..functions import Function, FunctionFactory
 from ..operators import BinaryOperatorFactory, BinaryOperator
-from ..coordinates import Coordinates
 from ..cell_range import CellRange
 from ..contents import Number
-from .consts import OPERATORS, FUNCTIONS, RANGE_SEPARATOR, PARAM_SEPARATOR
-
+from .consts import OPERATORS, FUNCTIONS, RANGE_SEPARATOR, PRECEDENCE, PARAM_SEPARATOR
 
 
 class Parser:
@@ -17,12 +13,9 @@ class Parser:
         self._operators = OPERATORS
         self._functions = FUNCTIONS
         self._range_separator = RANGE_SEPARATOR
-        self._precedence = {
-            "*": 2, "/": 2,
-            "+": 1, "-": 1,
-        }
+        self._precedence = PRECEDENCE
 
-    def parse_function(self, tokens: List[str], position: int) -> tuple[Function, int]:
+    def parse_function(self, tokens: list[str], position: int) -> tuple[Function, int]:
         """Parses a function call and returns a Function object."""
         function_name = tokens[position]
         args = []
@@ -55,7 +48,7 @@ class Parser:
         function = FunctionFactory.create(function_name, args)
         return function, i
 
-    def tokens_to_components(self, tokens: List[str]) -> List[FormulaComponent]:
+    def tokens_to_components(self, tokens: list[str]) -> list[FormulaComponent]:
         """Converts a list of tokens into Component objects."""
         components = []
         i = 0
@@ -80,7 +73,7 @@ class Parser:
 
         return components
 
-    def infix_to_postfix(self, components: List[FormulaComponent]) -> List[FormulaComponent]:
+    def infix_to_postfix(self, components: list[FormulaComponent]) -> list[FormulaComponent]:
         """Converts a list of Components in infix order to postfix order."""
         output = []
         stack = []
