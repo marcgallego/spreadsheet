@@ -12,11 +12,12 @@ class Content(ABC):
     def set_value(self) -> None:
         pass
 
-    @abstractmethod
     def get_value_as_float(self) -> float:
-        pass
+        return self._value
 
     def get_value_as_str(self) -> str:
+        if self._value.is_integer():
+            return str(int(self._value))
         return str(self._value)
 
     def is_formula(self) -> bool:
@@ -62,9 +63,6 @@ class Formula(Content):
     def set_value(self, value: float) -> None:
         self._value = value
 
-    def get_value_as_float(self) -> float:
-        return self._value
-
     def get_dependencies(self) -> set[Coordinates]:
         dependencies = set()
         for component in self._postfix:
@@ -87,14 +85,6 @@ class Number(Content, Operand, Argument):
 
     def set_value(self, value: float) -> None:
         self._value = value
-
-    def get_value_as_float(self) -> float:
-        return self._value
-
-    def get_value_as_str(self) -> str:
-        if self._value.is_integer():
-            return str(int(self._value))
-        return str(self._value)
 
     def evaluate(self, _) -> float:
         return self._value
@@ -126,3 +116,6 @@ class Text(Content):
         except:
             raise ValueError(
                 f'("{self._value}") is of type text and cannot be converted to float')
+
+    def get_value_as_str(self) -> str:
+        return self._value
