@@ -1,4 +1,4 @@
-from ..formula_component import FormulaComponent, OpeningParenthesis, ClosingParenthesis
+from ..formula_components import FormulaComponent, OpeningParenthesis, ClosingParenthesis
 from ..functions import Function, FunctionFactory
 from ..operators import BinaryOperatorFactory
 from ..cell_range import CellRange

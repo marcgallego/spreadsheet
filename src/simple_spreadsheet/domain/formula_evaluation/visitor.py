@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from ..formula_component import FormulaComponent
+from ..formula_components import FormulaComponent
 
 
 class Visitor(ABC):

@@ -1,6 +1,6 @@
 from abc import abstractmethod
 
-from .formula_component import FormulaComponent, Operand
+from .formula_components import FormulaComponent, Operand
 from .contents import Number
 from .spreadsheet import Spreadsheet
 

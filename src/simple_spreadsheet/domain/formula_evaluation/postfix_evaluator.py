@@ -1,5 +1,5 @@
 from ..spreadsheet import Spreadsheet
-from ..formula_component import FormulaComponent
+from ..formula_components import FormulaComponent
 from .visitor import Visitor
 
 

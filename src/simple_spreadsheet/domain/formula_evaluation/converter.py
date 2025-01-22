@@ -1,4 +1,4 @@
-from ..formula_component import FormulaComponent
+from ..formula_components import FormulaComponent
 from ..operators import BinaryOperator
 from .visitor import Visitor
 from .consts import PRECEDENCE
