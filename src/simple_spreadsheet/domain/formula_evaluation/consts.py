@@ -6,13 +6,15 @@ type Token = Union[str, float, Coordinates]
 FUNCTIONS = frozenset({'SUMA', 'PROMEDIO', 'MAX', 'MIN'})
 
 OPERATORS = frozenset({'+', '-', '*', '/'})
-UNARY_OPERATORS = {'+', '-'}  # Only used for numbers
+UNARY_OPERATORS = frozenset({'+', '-'})  # Only used for numbers
 
 DECIMAL_SEPARATOR = '.'
 RANGE_SEPARATOR = ':'
 PARAM_SEPARATOR = ';'
 SEPARATORS = frozenset({RANGE_SEPARATOR, PARAM_SEPARATOR})
 
-DELIMITERS = frozenset({'(', ')'})
+OPENING_PARENTHESIS = '('
+CLOSING_PARENTHESIS = ')'
+PARENTHESES = frozenset({OPENING_PARENTHESIS, CLOSING_PARENTHESIS})
 
-SPECIAL_CHARS = OPERATORS | SEPARATORS | DELIMITERS
+SPECIAL_CHARS = OPERATORS | SEPARATORS | PARENTHESES

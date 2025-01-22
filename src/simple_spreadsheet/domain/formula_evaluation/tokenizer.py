@@ -1,7 +1,7 @@
 from typing import Union
 from simple_spreadsheet.domain.coordinates import Coordinates
 from simple_spreadsheet.domain.contents import Number
-from .consts import Token, DECIMAL_SEPARATOR, SPECIAL_CHARS, FUNCTIONS, UNARY_OPERATORS
+from .consts import Token, DECIMAL_SEPARATOR, SPECIAL_CHARS, FUNCTIONS, UNARY_OPERATORS, CLOSING_PARENTHESIS
 
 
 class Tokenizer:
@@ -11,6 +11,7 @@ class Tokenizer:
         self._unary_operators = UNARY_OPERATORS
         self._special_chars = SPECIAL_CHARS
         self._functions = FUNCTIONS
+        self._closing_parenthesis = CLOSING_PARENTHESIS
 
     def _is_valid_numeric_char(self, char: str) -> bool:
         """Checks if a character is a digit or the decimal separator."""
@@ -66,7 +67,7 @@ class Tokenizer:
         """
         return (prev_token is not None and
                 (isinstance(prev_token, (Number, Coordinates)) or
-                 (isinstance(prev_token, str) and prev_token == ')')))
+                 (isinstance(prev_token, str) and prev_token == self._closing_parenthesis)))
 
     def tokenize(self, expression: str) -> list[Token]:
         """Tokenizes the given mathematical expression."""

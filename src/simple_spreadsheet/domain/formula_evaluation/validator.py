@@ -3,7 +3,7 @@ from typing import Optional
 
 from ..coordinates import Coordinates
 from ..contents import Number
-from .consts import Token, OPERATORS, UNARY_OPERATORS, SEPARATORS, FUNCTIONS, RANGE_SEPARATOR, PARAM_SEPARATOR
+from .consts import Token, OPERATORS, UNARY_OPERATORS, SEPARATORS, FUNCTIONS, RANGE_SEPARATOR, PARAM_SEPARATOR, OPENING_PARENTHESIS, CLOSING_PARENTHESIS
 
 
 class FormulaTokenType(Enum):
@@ -36,6 +36,8 @@ class Validator:
         self._functions = FUNCTIONS
         self._range_separator = RANGE_SEPARATOR
         self._param_separator = PARAM_SEPARATOR
+        self._opening_parenthesis = OPENING_PARENTHESIS
+        self._closing_parenthesis = CLOSING_PARENTHESIS
 
     def _is_token_type(self, token: Token, collection: frozenset) -> bool:
         """Generic token type checker."""
@@ -98,7 +100,7 @@ class Validator:
         num_args = 0
         last_element = FunctionTokenType.SEPARATOR
 
-        while (token := self._peek()) is not None and token != ')':
+        while (token := self._peek()) is not None and token != self._closing_parenthesis:
             if token == self._param_separator:
                 if last_element == FunctionTokenType.SEPARATOR:
                     raise SyntaxError(
@@ -138,14 +140,14 @@ class Validator:
         """Parse a function call including its arguments."""
         function_name = self._consume()
 
-        if self._peek() != '(':
-            raise SyntaxError(
-                f"Function '{function_name}' must be followed by '('")
+        if self._peek() != self._opening_parenthesis:
+            raise SyntaxError(f"Function '{function_name}' must be followed by '{
+                              self._opening_parenthesis}'")
         self._consume()
 
         num_args = self._parse_function_arguments()
 
-        if self._peek() != ')':
+        if self._peek() != self._closing_parenthesis:
             raise SyntaxError(
                 f"Function '{function_name}' missing closing parenthesis")
         self._consume()
@@ -167,11 +169,11 @@ class Validator:
             self._parse_function()
             return
 
-        if token == '(':
+        if token == self._opening_parenthesis:
             self._consume()
             self._parse_expression()
 
-            if self._peek() != ')':
+            if self._peek() != self._closing_parenthesis:
                 raise SyntaxError(
                     f"Missing closing parenthesis at position {self._pos}")
             self._consume()
