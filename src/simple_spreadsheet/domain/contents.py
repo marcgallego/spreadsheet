@@ -123,4 +123,4 @@ class Text(Content):
             return float(self._value)
         except:
             raise ValueError(
-                f'A text ("{self._value}") cannot be converted to float')
+                f'("{self._value}") is of type text and cannot be converted to float')
