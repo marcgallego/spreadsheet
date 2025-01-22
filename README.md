@@ -1,4 +1,5 @@
 # simple_spreadsheet
+
 `simple_spreadsheet` is a simple terminal-based application that allows users to create and edit spreadsheets. It is coded in Python and has support for:
 
 - Creating spreadsheets
@@ -15,6 +16,16 @@
 - Displaying the spreadsheet, with automatic update of formulas as dependent cells change.
 - Saving a spreadsheet to a `.s2v` file
 - Loading a spreadsheet from a `.s2v` file
+
+## Important notes
+
+- We have implemented 2 controllers, one specifically for the checker, and one that includes the UI and has no dependencies on the checker and hence, is easy to distribute as a package.
+
+- The project has been developed using Visual Studio Code. We are available for a live demo/correction if needed. Just email us!
+
+- In terms of architecutre, since the consultation, we have:
+  - implemented all the inheritance suggestions, those large nested if-else chains have been replaced by polymorphism.
+  - implemented the visitor design pattern for the formula evaluation, removing type enums and the need for type checking.
 
 ## How to run locally
 
@@ -69,12 +80,3 @@ source venv/bin/activate && python src/simple_spreadsheet/main.py
 ```
 source venv/bin/activate && cd tests/automatic_grader && PYTHONPATH=$PYTHONPATH:../../../spreadsheet python markerrun/TestsRunner.py
 ```
-
-## Notes
-
-- We have implemented 2 controllers, one specifically for the checker, and one that includes the UI and has no dependencies on the checker and hence, is easy to distribute as a package.
-
-- The project has been developed using Visual Studio Code.
-
-- We are up for a live demo/correction if needed. Just email us!
-
