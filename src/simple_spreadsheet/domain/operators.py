@@ -4,6 +4,7 @@ from abc import abstractmethod
 from .formula_component import FormulaComponent, ComponentType
 from .coordinates import Coordinates
 from .functions import Function
+from .contents import Number
 from .spreadsheet import Spreadsheet
 
 type Operand = Union[float, Coordinates, Function]
@@ -26,7 +27,7 @@ class BinaryOperator(FormulaComponent):
         return self._compute(left_value, right_value)
 
     def _is_valid_operand(self, operand: Operand) -> bool:
-        return isinstance(operand, (float, Coordinates, Function))
+        return isinstance(operand, (Number, Coordinates, Function))
 
     def _validate_operands(self, left: Operand, right: Operand) -> None:
         if not self._is_valid_operand(left):
@@ -35,8 +36,8 @@ class BinaryOperator(FormulaComponent):
             raise TypeError(f"Invalid operand type: {type(right)}")
 
     def _evaluate_operand(self, operand: Operand, spreadsheet: Spreadsheet) -> float:
-        if isinstance(operand, float):
-            return operand
+        if isinstance(operand, Number):
+            return operand.get_value_as_float()
         if isinstance(operand, Coordinates):
             val = spreadsheet.get_cell(operand).get_value_as_float()
             return val if val is not None else 0.0

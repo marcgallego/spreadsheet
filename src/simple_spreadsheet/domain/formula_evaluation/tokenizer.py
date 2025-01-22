@@ -1,5 +1,6 @@
 from typing import Union
 from simple_spreadsheet.domain.coordinates import Coordinates
+from simple_spreadsheet.domain.contents import Number
 from .consts import Token, DECIMAL_SEPARATOR, SPECIAL_CHARS, FUNCTIONS, UNARY_OPERATORS
 
 
@@ -39,7 +40,7 @@ class Tokenizer:
         if num in self._unary_operators:  # Handle alone signs
             raise ValueError(f'Invalid number at position {start_index}')
 
-        return float(num), i
+        return Number(num), i
 
     def _extract_cell_or_function(self, expression: str, start_index: int) -> tuple[Union[str, Coordinates], int]:
         """Extracts a cell reference or function from the expression."""
@@ -64,7 +65,7 @@ class Tokenizer:
         Returns True if the previous token is a number, cell reference, or closing parenthesis.
         """
         return (prev_token is not None and
-                (isinstance(prev_token, (float, Coordinates)) or
+                (isinstance(prev_token, (Number, Coordinates)) or
                  (isinstance(prev_token, str) and prev_token == ')')))
 
     def tokenize(self, expression: str) -> list[Token]:

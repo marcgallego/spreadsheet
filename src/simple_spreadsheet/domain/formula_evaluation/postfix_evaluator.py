@@ -1,6 +1,7 @@
 from ..spreadsheet import Spreadsheet
 from ..functions import Function
 from ..coordinates import Coordinates
+from ..contents import Number
 from ..formula_component import ComponentType, FormulaComponent
 
 
@@ -8,9 +9,7 @@ class PostfixEvaluator:
     def evaluate(self, postfix: list[FormulaComponent], spreadsheet: Spreadsheet) -> float:
         stack = []
         for component in postfix:
-
-            component_type = component.get_type() if not isinstance(
-                component, float) else ComponentType.OPERAND
+            component_type = component.get_type()
 
             if component_type == ComponentType.OPERAND:
                 stack.append(component)
@@ -27,9 +26,10 @@ class PostfixEvaluator:
                 "Invalid postfix expression: stack does not contain exactly one element.")
 
         result = stack.pop()
+        if isinstance(result, Number):
+            return result.get_value_as_float()
         if isinstance(result, Function):
             return result.evaluate(spreadsheet)
         if isinstance(result, Coordinates):
             return spreadsheet.get_cell(result).get_value_as_float()
-
         return result

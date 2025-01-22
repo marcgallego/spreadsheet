@@ -1,12 +1,13 @@
 from typing import Union
 from abc import abstractmethod
 
-from simple_spreadsheet.domain.formula_component import FormulaComponent, ComponentType
-from simple_spreadsheet.domain.coordinates import Coordinates
-from simple_spreadsheet.domain.cell_range import CellRange
-from simple_spreadsheet.domain.spreadsheet import Spreadsheet
+from .formula_component import FormulaComponent, ComponentType
+from .coordinates import Coordinates
+from .contents import Number
+from .cell_range import CellRange
+from .spreadsheet import Spreadsheet
 
-type Argument = Union[float, Coordinates, CellRange, Function]
+type Argument = Union[Number, Coordinates, CellRange, Function]
 
 
 class Function(FormulaComponent):
@@ -26,8 +27,8 @@ class Function(FormulaComponent):
     def _evaluate_argument(self, arg: Argument, spreadsheet: Spreadsheet) -> list[float]:
         """Evaluates an argument and returns numeric values, excluding `None`."""
         # TODO: use inheritance instead of type checking, e.g. `arg.evaluate()`
-        if isinstance(arg, float):
-            return [arg]
+        if isinstance(arg, Number):
+            return [arg.get_value_as_float()]
         if isinstance(arg, Coordinates):
             value = spreadsheet.get_cell(arg).get_value_as_float()
             return [value] if value is not None else []

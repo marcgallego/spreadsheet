@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from enum import Enum, auto
 
 from .formula_component import FormulaComponent, ComponentType
 from .coordinates import Coordinates
@@ -29,7 +28,6 @@ class ContentFactory():
         if isinstance(value, str) and value.startswith('='):
             return Formula(value)
         try:
-            value = float(value)
             return Number(value)
         except ValueError:
             return Text(value)
@@ -69,7 +67,7 @@ class Formula(Content):
     def get_dependencies(self) -> set[Coordinates]:
         dependencies = set()
         for component in self._postfix:
-            if not isinstance(component, float) and component.get_type() == ComponentType.OPERAND:
+            if component.get_type() == ComponentType.OPERAND:
                 dependencies.update(component.get_dependencies())
 
         return dependencies
@@ -79,9 +77,9 @@ class Formula(Content):
 
 
 class Number(Content, FormulaComponent):
-    def __init__(self, value: float | int) -> None:
-        if not isinstance(value, (float, int)):
-            raise ValueError('Value must be a number')
+    _type = ComponentType.OPERAND
+
+    def __init__(self, value: float | int | str) -> None:
         self._value = float(value)
 
     def __str__(self) -> str:
@@ -92,6 +90,9 @@ class Number(Content, FormulaComponent):
 
     def get_value_as_float(self) -> float:
         return self._value
+
+    def get_dependencies(self) -> set[Coordinates]:
+        return set()
 
 
 class Text(Content):

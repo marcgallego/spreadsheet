@@ -1,6 +1,8 @@
 from enum import Enum, auto
 from typing import Optional
-from simple_spreadsheet.domain.coordinates import Coordinates
+
+from ..coordinates import Coordinates
+from ..contents import Number
 from .consts import Token, OPERATORS, UNARY_OPERATORS, SEPARATORS, FUNCTIONS, RANGE_SEPARATOR, PARAM_SEPARATOR
 
 
@@ -49,7 +51,7 @@ class Validator:
 
     def _is_number(self, token: Token) -> bool:
         """Check if token is a numeric value."""
-        return isinstance(token, float)
+        return isinstance(token, Number)
 
     def _is_operator(self, token: Token) -> bool:
         """Check if token is an operator."""

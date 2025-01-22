@@ -5,6 +5,7 @@ from ..functions import Function, FunctionFactory
 from ..cell_range import CellRange
 from ..operators import BinaryOperatorFactory, BinaryOperator
 from ..coordinates import Coordinates
+from ..contents import Number
 from .consts import OPERATORS, FUNCTIONS, RANGE_SEPARATOR, PARAM_SEPARATOR
 
 type Component = Union[float, Coordinates, Function, BinaryOperator]
@@ -40,7 +41,7 @@ class Parser:
             elif token in self._functions:
                 arg, i = self.parse_function(tokens, i)
                 args.append(arg)
-            elif isinstance(token, float):
+            elif isinstance(token, Number):
                 args.append(token)
                 i += 1
             else:  # Token is a cell reference (Coordinates)
@@ -88,8 +89,7 @@ class Parser:
 
         for component in components:
             # TODO: float will be Number in the future, so this will need to be updated
-            component_type = component.get_type() if not isinstance(
-                component, float) else ComponentType.OPERAND
+            component_type = component.get_type()
 
             if component_type == ComponentType.OPERAND:
                 output.append(component)
