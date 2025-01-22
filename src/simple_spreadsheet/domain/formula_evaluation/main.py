@@ -6,6 +6,7 @@ from .converter import Converter
 from .postfix_evaluator import PostfixEvaluator
 
 from ..contents import Formula
+from ..formula_components import FormulaComponent
 from ..spreadsheet import Spreadsheet
 
 
@@ -16,7 +17,7 @@ class FormulaEvaluator:
         self._parser = Parser()
         self._converter = Converter()
 
-    def get_postfix(self, formula: Formula) -> list:
+    def get_postfix(self, formula: Formula) -> list[FormulaComponent]:
         postfix = formula.get_postfix()
         if postfix is None:
             expression = formula.expression[1:]  # remove '='
