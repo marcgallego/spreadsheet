@@ -9,9 +9,6 @@ from simple_spreadsheet.framework.ui import UserInterface
 from simple_spreadsheet.framework.file_manager import FileManager
 
 
-# TODO: si editem un contingut del qual depen una formula a un text, per exemple, la formula no es pot reavaluar
-
-
 class Controller:
 
     def __init__(self) -> None:

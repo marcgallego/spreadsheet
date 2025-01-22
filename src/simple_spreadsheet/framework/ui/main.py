@@ -152,7 +152,6 @@ class UserInterface(App):
             # unselect the cell
             self.grid.selected_cell = None
             self.grid.focus()
-            # TODO: deal with empty "" and how values are converted to Content
         else:
             self.text_input.value = ""
             self.grid.focus()
