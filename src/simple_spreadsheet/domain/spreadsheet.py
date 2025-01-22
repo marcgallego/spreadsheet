@@ -3,7 +3,6 @@ from functools import singledispatchmethod
 from .cell import Cell
 from .contents import Content
 from .coordinates import Coordinates, Column
-from .cell_range import CellRange
 from .consts import NUM_ROWS, NUM_COLS
 
 

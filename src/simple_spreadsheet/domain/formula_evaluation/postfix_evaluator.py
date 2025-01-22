@@ -1,5 +1,5 @@
 from ..spreadsheet import Spreadsheet
-from ..formula_component import Operand, ComponentType, FormulaComponent
+from ..formula_component import ComponentType, FormulaComponent
 
 
 class PostfixEvaluator:

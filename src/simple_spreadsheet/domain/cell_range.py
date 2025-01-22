@@ -1,6 +1,5 @@
 from .functions import Argument
 from .coordinates import Coordinates
-from .contents import Content
 
 
 class CellRange(Argument):
