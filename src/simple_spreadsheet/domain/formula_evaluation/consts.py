@@ -6,7 +6,7 @@ type Token = Union[str, float, Coordinates]
 FUNCTIONS = {'SUMA', 'PROMEDIO', 'MAX', 'MIN'}
 
 OPERATORS = {'+', '-', '*', '/'}
-UNARY_OPERATORS = {'+', '-'}
+UNARY_OPERATORS = {'+', '-'}  # Only used for numbers
 
 DECIMAL_SEPARATOR = '.'
 RANGE_SEPARATOR = ':'
