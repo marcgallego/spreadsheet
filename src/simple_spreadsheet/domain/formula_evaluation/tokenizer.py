@@ -24,7 +24,7 @@ class Tokenizer:
             if expression[i] == self._decimal_separator:
                 if decimal_separator_seen:
                     raise ValueError(
-                        f'Multiple decimal separators at position {i}')
+                        'A number contains multiple decimal separators')
                 decimal_separator_seen = True
             num += expression[i]
             i += 1
