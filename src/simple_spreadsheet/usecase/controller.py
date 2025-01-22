@@ -1,12 +1,12 @@
 from functools import singledispatchmethod
 
-from simple_spreadsheet.domain.spreadsheet import Spreadsheet
-from simple_spreadsheet.domain.coordinates import Coordinates
-from simple_spreadsheet.domain.contents import ContentFactory
-from simple_spreadsheet.domain.formula_evaluation import FormulaEvaluator
-from simple_spreadsheet.domain.update_manager import UpdateManager
-from simple_spreadsheet.framework.ui import UserInterface
-from simple_spreadsheet.framework.file_manager import FileManager
+from ..domain.spreadsheet import Spreadsheet
+from ..domain.coordinates import Coordinates
+from ..domain.contents import ContentFactory
+from ..domain.formula_evaluation import FormulaEvaluator
+from ..domain.update_manager import UpdateManager
+from ..framework.ui import UserInterface
+from ..framework.file_manager import FileManager
 
 
 class Controller:
