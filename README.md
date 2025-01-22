@@ -51,5 +51,5 @@ source venv/bin/activate && python src/simple_spreadsheet/main.py
 ```
 
 ```
-source venv/bin/activate && cd tests/automatic_grader && PYTHONPATH=$PYTHONPATH:.:../../../spreadsheet python markerrun/TestsRunner.py
+source venv/bin/activate && cd tests/automatic_grader && PYTHONPATH=$PYTHONPATH:../../../spreadsheet python markerrun/TestsRunner.py
 ```
