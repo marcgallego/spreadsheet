@@ -17,6 +17,8 @@
 - Saving a spreadsheet to a `.s2v` file
 - Loading a spreadsheet from a `.s2v` file
 
+<img width="1162" alt="App screenshot" src="https://github.com/user-attachments/assets/c90391c9-328f-498a-8e56-c3365b396b96" />
+
 ## Important notes
 
 - We have implemented 2 controllers, one specifically for the checker, and one that includes the UI and has no dependencies on the checker and hence, is easy to distribute as a package.
