@@ -19,16 +19,6 @@
 
 <img width="1162" alt="App screenshot" src="https://github.com/user-attachments/assets/c90391c9-328f-498a-8e56-c3365b396b96" />
 
-## Important notes
-
-- We have implemented 2 controllers, one specifically for the checker, and one that includes the UI and has no dependencies on the checker and hence, is easy to distribute as a package.
-
-- The project has been developed using Visual Studio Code. We are available for a live demo/correction if needed. Just email us!
-
-- In terms of architecutre, since the consultation, we have:
-  - implemented all the inheritance suggestions, those large nested if-else chains have been replaced by polymorphism.
-  - implemented the visitor design pattern for the formula evaluation, removing type enums and the need for type checking.
-
 ## How to run locally
 
 ### Prepare the environment
